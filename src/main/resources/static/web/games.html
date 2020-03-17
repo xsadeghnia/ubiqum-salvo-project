@@ -1,0 +1,21 @@
+<!DOCTYPE>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <title>Salvo</title>
+</head>
+
+<body>
+ <div id="myVue">
+     <ol>
+    <li v-for="game in games">
+        <span>{{convertTimestamp(game.creationDate)}}: </span>
+        <span v-for="gamePlayer in game.gamePlayers"><span>{{gamePlayer.player.email}}, </span></span>
+
+    </li>
+     </ol>
+ </div>
+<script src="games.js"></script>
+</body>
+
+</html>
