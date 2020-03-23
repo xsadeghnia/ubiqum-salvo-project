@@ -1,12 +1,14 @@
 package com.codeoftheweb.salvo;
 
-import com.codeoftheweb.salvo.entity.Game;
-import com.codeoftheweb.salvo.entity.GamePlayer;
-import com.codeoftheweb.salvo.entity.Player;
+import com.codeoftheweb.salvo.entity.*;
+import com.codeoftheweb.salvo.repository.GamePlayerRepository;
 import com.codeoftheweb.salvo.repository.GameRepository;
 import com.codeoftheweb.salvo.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
@@ -89,4 +91,68 @@ public class SalvoController {
 
         return result;
     }
+
+
+    @RequestMapping("/api/game_view/{id}")
+    public List<Object> getGameView(@PathVariable("id") Long gameId){
+        class PlayerModel{
+            public Long id;
+            public String email;
+        }
+        class ShipModel{
+            public List<String> shipLocations;
+            public String type;
+        }
+        class GamePlayerModel{
+            public Long id;
+            public PlayerModel player;
+
+        }
+        class GameModel{
+            public long id;
+            public Long creationDate;
+            public List<GamePlayerModel> gamePlayers;
+            public List<ShipModel> ships;
+        }
+
+
+
+        List<Object> result = new ArrayList<>();
+
+        Optional<Game> game = gameRepository.findById(gameId);
+        if (!game.isPresent()){
+
+        }
+
+        GameModel gameModel = new GameModel();
+        gameModel.id = game.get().getId();
+        gameModel.creationDate = game.get().getCreationDate();
+
+        List<GamePlayerModel> gplayers = new ArrayList<>();
+        GamePlayerModel gamePlayerModel = new GamePlayerModel();
+        List<ShipModel> shipModels = new ArrayList<>();
+        for (GamePlayer gp : game.get().getGamePlayers()){
+          gamePlayerModel.id = gp.getId();
+          gamePlayerModel.player = new PlayerModel();
+          gamePlayerModel.player.id = gp.getPlayer().getId();
+          gamePlayerModel.player.email = gp.getPlayer().getUserName();
+          gplayers.add(gamePlayerModel);
+            System.out.println(gp.getShips().size());
+          for (Ship ship : gp.getShips()){
+              ShipModel shipModel = new ShipModel();
+              shipModel.shipLocations = ship.getShipLocations();
+              shipModel.type = ship.getShipType().getName();
+              shipModels.add(shipModel);
+              System.out.println(shipModel.type);
+          }
+
+
+        }
+        gameModel.gamePlayers = gplayers;
+        gameModel.ships = shipModels;
+
+        result.add(gameModel);
+        return result;
+    }
+
 }

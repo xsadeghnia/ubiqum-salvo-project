@@ -19,6 +19,6 @@ new Vue({
           }
         },
     created: function() {
-            this.init();
-            }
+      this.init();
+    }
 });

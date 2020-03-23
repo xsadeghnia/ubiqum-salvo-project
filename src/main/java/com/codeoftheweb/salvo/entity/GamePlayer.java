@@ -3,6 +3,7 @@ package com.codeoftheweb.salvo.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class GamePlayer {
@@ -20,6 +21,9 @@ public class GamePlayer {
     private Game game;
 
     private long joinDate;
+
+    @OneToMany(mappedBy = "gamePlayer")
+    private Set<Ship> ships;
 
     public GamePlayer() {
     }
@@ -56,6 +60,14 @@ public class GamePlayer {
         this.id = id;
     }
 
+    public Set<Ship> getShips() {
+        return ships;
+    }
+
+    public void setShips(Set<Ship> ships) {
+        this.ships = ships;
+    }
+
     @Override
     public String toString() {
         return "GamePlayer{" +
@@ -63,6 +75,7 @@ public class GamePlayer {
                 ", player=" + player +
                 ", game=" + game +
                 ", joinDate=" + joinDate +
+                ", ships=" + ships +
                 '}';
     }
 }

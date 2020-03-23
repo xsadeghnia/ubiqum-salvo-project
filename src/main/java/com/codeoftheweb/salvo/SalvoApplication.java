@@ -1,11 +1,7 @@
 package com.codeoftheweb.salvo;
 
-import com.codeoftheweb.salvo.entity.GamePlayer;
-import com.codeoftheweb.salvo.entity.Player;
-import com.codeoftheweb.salvo.repository.GamePlayerRepository;
-import com.codeoftheweb.salvo.repository.GameRepository;
-import com.codeoftheweb.salvo.entity.Game;
-import com.codeoftheweb.salvo.repository.PlayerRepository;
+import com.codeoftheweb.salvo.entity.*;
+import com.codeoftheweb.salvo.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -14,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 
-import java.util.Date;
+import java.util.*;
 //import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 //import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 //import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,114 +30,222 @@ public class SalvoApplication extends SpringBootServletInitializer {
     }
 
     @Bean
-    public CommandLineRunner demo(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository) {
+    public CommandLineRunner demo(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, ShipTypeRepository shipTypeRepository) {
         return (args) -> {
-            // save a few players
-            Player player1 = new Player();
-            player1.setFirstName("Jack");
-            player1.setLastName("Bauer");
-            player1.setUserName("jack@gamil.com");
-            player1.setPassword("jack123");
+            // Set shipType
+            ShipType shipType1 = new ShipType();
+            shipType1.setName("Carrier");
+            shipType1.setLength(5);
+
+            ShipType shipType2 = new ShipType();
+            shipType2.setName("Battleship");
+            shipType2.setLength(4);
+
+            ShipType shipType3 = new ShipType();
+            shipType3.setName("Submarine");
+            shipType3.setLength(3);
+
+            ShipType shipType4 = new ShipType();
+            shipType4.setName("Destroyer");
+            shipType4.setLength(3);
+
+            ShipType shipType5 = new ShipType();
+            shipType5.setName("Patrol Boat");
+            shipType5.setLength(2);
+
+            shipTypeRepository.save(shipType1);
+            shipTypeRepository.save(shipType2);
+            shipTypeRepository.save(shipType3);
+            shipTypeRepository.save(shipType4);
+            shipTypeRepository.save(shipType5);
+
 
             Date date = new Date();
             Date newDate = Date.from(date.toInstant().plusSeconds(3600));
             Date secondNewDate = Date.from(date.toInstant().plusSeconds(7200));
 
-            Game game1 = new Game();
-            game1.setCreationDate(date.getTime());
 
-            GamePlayer gamePlayer1 = new GamePlayer();
-            gamePlayer1.setPlayer(player1);
-            gamePlayer1.setGame(game1);
-            gamePlayer1.setJoinDate(0);
+            {
+                // save a few players
+                Player player = new Player();
+                player.setFirstName("Jack");
+                player.setLastName("Bauer");
+                player.setUserName("jack@gamil.com");
+                player.setPassword("jack123");
+                playerRepository.save(player);
 
-            playerRepository.save(player1);
-            gameRepository.save(game1);
-            gamePlayerRepository.save(gamePlayer1);
+                Game game = new Game();
+                game.setCreationDate(date.getTime());
+                gameRepository.save(game);
 
-            Player player2 = new Player();
-            player2.setFirstName("Chloe");
-            player2.setLastName("Brian");
-            player2.setUserName("chloe@yahoo.com");
-            player2.setPassword("chloe123");
+                GamePlayer gamePlayer = new GamePlayer();
+                gamePlayer.setPlayer(player);
+                gamePlayer.setGame(game);
+                gamePlayer.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer);
 
-            Game game2 = new Game();
-            game1.setCreationDate(newDate.getTime());
+                Ship ship1 = new Ship();
+                ship1.setShipLocations(Arrays.asList("H1", "H2", "H3", "H4"));
+                ship1.setShipType(shipType2);
+                ship1.setGamePlayer(gamePlayer);
+                shipRepository.save(ship1);
 
-            GamePlayer gamePlayer2 = new GamePlayer();
-            gamePlayer2.setPlayer(player2);
-            gamePlayer2.setGame(game2);
-            gamePlayer2.setJoinDate(0);
+            }
 
-            playerRepository.save(player2);
-            gameRepository.save(game2);
-            gamePlayerRepository.save(gamePlayer2);
+            {
+                // save a few players
+                Player player = new Player();
+                player.setFirstName("Chloe");
+                player.setLastName("Brian");
+                player.setUserName("chloe@yahoo.com");
+                player.setPassword("chloe123");
+                playerRepository.save(player);
+
+                Game game = new Game();
+                game.setCreationDate(newDate.getTime());
+                gameRepository.save(game);
+
+                GamePlayer gamePlayer = new GamePlayer();
+                gamePlayer.setPlayer(player);
+                gamePlayer.setGame(game);
+                gamePlayer.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer);
+
+                Ship ship2 = new Ship();
+                ship2.setShipLocations(Arrays.asList("A3", "B3", "C3"));
+                ship2.setShipType(shipType3);
+                ship2.setGamePlayer(gamePlayer);
+                shipRepository.save(ship2);
+
+                Ship ship4 = new Ship();
+                ship4.setShipLocations(Arrays.asList("G7","H7","I7"));
+                ship4.setShipType(shipType2);
+                ship4.setGamePlayer(gamePlayer);
+                shipRepository.save(ship4);
+
+            }
+
+            {
+                // save a few players
+                Player player = new Player();
+                player.setFirstName("Kim");
+                player.setLastName("Bauer");
+                player.setUserName("kim@gmail.com");
+                player.setPassword("kim123");
+                playerRepository.save(player);
+
+                Game game = new Game();
+                game.setCreationDate(secondNewDate.getTime());
+                gameRepository.save(game);
+
+                GamePlayer gamePlayer = new GamePlayer();
+                gamePlayer.setPlayer(player);
+                gamePlayer.setGame(game);
+                gamePlayer.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer);
+
+                Ship ship1 = new Ship();
+                ship1.setShipLocations(Arrays.asList("H1", "H2", "H3", "H4"));
+                ship1.setShipType(shipType2);
+                ship1.setGamePlayer(gamePlayer);
+                shipRepository.save(ship1);
 
 
-            Player player3 = new Player();
-            player3.setFirstName("Kim");
-            player3.setLastName("Bauer");
-            player3.setUserName("kim@gmail.com");
-            player3.setPassword("kim123");
-
-            Game game3 = new Game();
-            game1.setCreationDate(secondNewDate.getTime());
-
-            GamePlayer gamePlayer3 = new GamePlayer();
-            gamePlayer3.setPlayer(player3);
-            gamePlayer3.setGame(game2);
-            gamePlayer3.setJoinDate(0);
-
-            playerRepository.save(player3);
-//            gameRepository.save(game2);
-            gamePlayerRepository.save(gamePlayer3);
+                Ship ship5 = new Ship();
+                ship5.setShipLocations(Arrays.asList("J3","J4","J5","J6","J7"));
+                ship5.setShipType(shipType1);
+                ship5.setGamePlayer(gamePlayer);
+                shipRepository.save(ship5);
 
 
+                Ship ship3 = new Ship();
+                ship3.setShipLocations(Arrays.asList("F5","F6"));
+                ship3.setShipType(shipType5);
+                ship3.setGamePlayer(gamePlayer);
+                shipRepository.save(ship3);
 
-           /* Player player4 = new Player();
-            player4.setFirstName("David");
-            player4.setLastName("Palmer");
-            player4.setUserName("david@");
-            player4.setPassword("david123");
-            player4.setGamePlayers();
-            repository.save(new Player(player4);
-            Player player5 = new Player();
-            player5.setFirstName("Michelle");
-            player5.setLastName("Dessler");
-            player5.setUserName("michelle@");
-            player5.setPassword("michelle123");
-            player5.setGamePlayers();
-            repository.save(new Player(player5));*/
+
+            }
+
+            {
+                // save a few players
+                Player player = new Player();
+                player.setFirstName("David");
+                player.setLastName("Palmer");
+                player.setUserName("david@");
+                player.setPassword("david123");
+                playerRepository.save(player);
+
+                Game game = new Game();
+                game.setCreationDate(date.getTime());
+                gameRepository.save(game);
+
+                GamePlayer gamePlayer = new GamePlayer();
+                gamePlayer.setPlayer(player);
+                gamePlayer.setGame(game);
+                gamePlayer.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer);
+
+                Ship ship1 = new Ship();
+                ship1.setShipLocations(Arrays.asList("H1", "H2", "H3", "H4"));
+                ship1.setShipType(shipType2);
+                ship1.setGamePlayer(gamePlayer);
+                shipRepository.save(ship1);
+
+                Ship ship5 = new Ship();
+                ship5.setShipLocations(Arrays.asList("J3","J4","J5","J6","J7"));
+                ship5.setShipType(shipType1);
+                ship5.setGamePlayer(gamePlayer);
+                shipRepository.save(ship5);
+
+
+            }
+
+            {
+                // save a few players
+                Player player = new Player();
+                player.setFirstName("Michelle");
+                player.setLastName("Dessler");
+                player.setUserName("michelle@");
+                player.setPassword("michelle123");
+                playerRepository.save(player);
+
+                Game game = new Game();
+                game.setCreationDate(newDate.getTime());
+                gameRepository.save(game);
+
+                GamePlayer gamePlayer = new GamePlayer();
+                gamePlayer.setPlayer(player);
+                gamePlayer.setGame(game);
+                gamePlayer.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer);
+
+                Ship ship1 = new Ship();
+                ship1.setShipLocations(Arrays.asList("H1", "H2", "H3", "H4"));
+                ship1.setShipType(shipType1);
+                ship1.setGamePlayer(gamePlayer);
+                shipRepository.save(ship1);
+
+                Ship ship2 = new Ship();
+                ship2.setShipLocations(Arrays.asList("A3", "B3", "C3"));
+                ship2.setShipType(shipType3);
+                ship2.setGamePlayer(gamePlayer);
+                shipRepository.save(ship2);
+
+
+                Ship ship4 = new Ship();
+                ship4.setShipLocations(Arrays.asList("G7","H7","I7"));
+                ship4.setShipType(shipType2);
+                ship4.setGamePlayer(gamePlayer);
+                shipRepository.save(ship4);
+
+
+            }
         };
     }
 
 }
 
-//    public CommandLineRunner demo(GameRepository repository) {
-//        return (args) -> {
-//            // save a few players
-//            Date date = new Date();
-//            Date newDate = Date.from(date.toInstant().plusSeconds(3600));
-//            Date secondNewDate = Date.from(date.toInstant().plusSeconds(7200));
-//            repository.save(new Game(date.getTime()));
-//            repository.save(new Game(newDate.getTime()));
-//            repository.save(new Game(secondNewDate.getTime()));
-//        };
-//    }
-
-
-//    public CommandLineRunner demo(PlayerRepository repository) {
-//        return (args) -> {
-//            // save a few players
-//            repository.save(new Player("Jack", "Bauer", "jack@", "jack123"));
-//            repository.save(new Player("Chloe", "O'Brian", "chloe@", "chloe123"));
-//            repository.save(new Player("Kim", "Bauer", "kim@", "kim123"));
-//            repository.save(new Player("David", "Palmer", "david@", "david123"));
-//            repository.save(new Player("Michelle", "Dessler", "michelle@", "michelle123"));
-//        };
-//    }
-//
-//}
 
 //@Configuration
 //class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {

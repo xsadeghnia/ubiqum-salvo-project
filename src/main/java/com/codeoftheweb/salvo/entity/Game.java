@@ -11,7 +11,7 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
-    long creationDate ;
+    private long creationDate ;
 
     @OneToMany(mappedBy = "game")
     private Set<GamePlayer> gamePlayers;

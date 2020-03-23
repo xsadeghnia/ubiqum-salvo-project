@@ -1,0 +1,28 @@
+<!DOCTYPE>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Ship Locations</title>
+
+</head>
+
+<body>
+<div id="myVue" class="container">
+<table class="table table-bordered">
+    <tr>
+        <td v-for="row in rows">{{row}}</td>
+    </tr>
+    <tr v-for="column in columns">
+        <td  v-for="row in rows" :ref="column+row"><span v-if="row == 0">{{column}}</span></td>
+    </tr>
+</table>
+</div>
+<script src="game.js"></script>
+</body>
+
+</html>
