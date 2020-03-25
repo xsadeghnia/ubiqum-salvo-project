@@ -30,8 +30,9 @@ public class SalvoApplication extends SpringBootServletInitializer {
     }
 
     @Bean
-    public CommandLineRunner demo(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, ShipTypeRepository shipTypeRepository) {
+    public CommandLineRunner demo(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, ShipTypeRepository shipTypeRepository , SalvoRepository salvoRepository) {
         return (args) -> {
+            //
             // Set shipType
             ShipType shipType1 = new ShipType();
             shipType1.setName("Carrier");
@@ -67,180 +68,268 @@ public class SalvoApplication extends SpringBootServletInitializer {
 
             {
                 // save a few players
-                Player player = new Player();
-                player.setFirstName("Jack");
-                player.setLastName("Bauer");
-                player.setUserName("jack@gamil.com");
-                player.setPassword("jack123");
-                playerRepository.save(player);
+                Player player1 = new Player();
+                player1.setFirstName("Jack");
+                player1.setLastName("Bauer");
+                player1.setUserName("jack@gamil.com");
+                player1.setPassword("jack123");
+                playerRepository.save(player1);
+
+                Player player2 = new Player();
+                player2.setFirstName("Chloe");
+                player2.setLastName("Brian");
+                player2.setUserName("chloe@yahoo.com");
+                player2.setPassword("chloe123");
+                playerRepository.save(player2);
 
                 Game game = new Game();
                 game.setCreationDate(date.getTime());
                 gameRepository.save(game);
 
-                GamePlayer gamePlayer = new GamePlayer();
-                gamePlayer.setPlayer(player);
-                gamePlayer.setGame(game);
-                gamePlayer.setJoinDate(0);
-                gamePlayerRepository.save(gamePlayer);
+                GamePlayer gamePlayer1 = new GamePlayer();
+                gamePlayer1.setPlayer(player1);
+                gamePlayer1.setGame(game);
+                gamePlayer1.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer1);
+
+                GamePlayer gamePlayer2 = new GamePlayer();
+                gamePlayer2.setPlayer(player2);
+                gamePlayer2.setGame(game);
+                gamePlayer2.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer2);
 
                 Ship ship1 = new Ship();
                 ship1.setShipLocations(Arrays.asList("H1", "H2", "H3", "H4"));
                 ship1.setShipType(shipType2);
-                ship1.setGamePlayer(gamePlayer);
+                ship1.setGamePlayer(gamePlayer1);
                 shipRepository.save(ship1);
-
-            }
-
-            {
-                // save a few players
-                Player player = new Player();
-                player.setFirstName("Chloe");
-                player.setLastName("Brian");
-                player.setUserName("chloe@yahoo.com");
-                player.setPassword("chloe123");
-                playerRepository.save(player);
-
-                Game game = new Game();
-                game.setCreationDate(newDate.getTime());
-                gameRepository.save(game);
-
-                GamePlayer gamePlayer = new GamePlayer();
-                gamePlayer.setPlayer(player);
-                gamePlayer.setGame(game);
-                gamePlayer.setJoinDate(0);
-                gamePlayerRepository.save(gamePlayer);
-
-                Ship ship2 = new Ship();
-                ship2.setShipLocations(Arrays.asList("A3", "B3", "C3"));
-                ship2.setShipType(shipType3);
-                ship2.setGamePlayer(gamePlayer);
-                shipRepository.save(ship2);
-
-                Ship ship4 = new Ship();
-                ship4.setShipLocations(Arrays.asList("G7","H7","I7"));
-                ship4.setShipType(shipType2);
-                ship4.setGamePlayer(gamePlayer);
-                shipRepository.save(ship4);
-
-            }
-
-            {
-                // save a few players
-                Player player = new Player();
-                player.setFirstName("Kim");
-                player.setLastName("Bauer");
-                player.setUserName("kim@gmail.com");
-                player.setPassword("kim123");
-                playerRepository.save(player);
-
-                Game game = new Game();
-                game.setCreationDate(secondNewDate.getTime());
-                gameRepository.save(game);
-
-                GamePlayer gamePlayer = new GamePlayer();
-                gamePlayer.setPlayer(player);
-                gamePlayer.setGame(game);
-                gamePlayer.setJoinDate(0);
-                gamePlayerRepository.save(gamePlayer);
-
-                Ship ship1 = new Ship();
-                ship1.setShipLocations(Arrays.asList("H1", "H2", "H3", "H4"));
-                ship1.setShipType(shipType2);
-                ship1.setGamePlayer(gamePlayer);
-                shipRepository.save(ship1);
-
 
                 Ship ship5 = new Ship();
                 ship5.setShipLocations(Arrays.asList("J3","J4","J5","J6","J7"));
                 ship5.setShipType(shipType1);
-                ship5.setGamePlayer(gamePlayer);
+                ship5.setGamePlayer(gamePlayer1);
                 shipRepository.save(ship5);
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer1);
+                    salvo.setTurn(1);
+                    salvo.setSalvoLocations(Arrays.asList("D2", "J5"));
+                    salvoRepository.save(salvo);
+                }
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer1);
+                    salvo.setTurn(2);
+                    salvo.setSalvoLocations(Arrays.asList("G3", "H5"));
+                    salvoRepository.save(salvo);
+                }
 
 
                 Ship ship3 = new Ship();
                 ship3.setShipLocations(Arrays.asList("F5","F6"));
                 ship3.setShipType(shipType5);
-                ship3.setGamePlayer(gamePlayer);
+                ship3.setGamePlayer(gamePlayer2);
                 shipRepository.save(ship3);
 
+                Ship ship4 = new Ship();
+                ship4.setShipLocations(Arrays.asList("G7","H7","I7"));
+                ship4.setShipType(shipType2);
+                ship4.setGamePlayer(gamePlayer2);
+                shipRepository.save(ship4);
+
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer2);
+                    salvo.setTurn(1);
+                    salvo.setSalvoLocations(Arrays.asList("A2", "I9"));
+                    salvoRepository.save(salvo);
+                }
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer2);
+                    salvo.setTurn(2);
+                    salvo.setSalvoLocations(Arrays.asList("H3", "F5"));
+                    salvoRepository.save(salvo);
+                }
 
             }
 
             {
                 // save a few players
-                Player player = new Player();
-                player.setFirstName("David");
-                player.setLastName("Palmer");
-                player.setUserName("david@");
-                player.setPassword("david123");
-                playerRepository.save(player);
+                Player player1 = new Player();
+                player1.setFirstName("Michelle");
+                player1.setLastName("Dessler");
+                player1.setUserName("michelle@");
+                player1.setPassword("michelle123");
+                playerRepository.save(player1);
+
+                Player player2 = new Player();
+                player2.setFirstName("David");
+                player2.setLastName("Palmer");
+                player2.setUserName("david@");
+                player2.setPassword("david123");
+                playerRepository.save(player2);
 
                 Game game = new Game();
                 game.setCreationDate(date.getTime());
                 gameRepository.save(game);
 
-                GamePlayer gamePlayer = new GamePlayer();
-                gamePlayer.setPlayer(player);
-                gamePlayer.setGame(game);
-                gamePlayer.setJoinDate(0);
-                gamePlayerRepository.save(gamePlayer);
+                GamePlayer gamePlayer1 = new GamePlayer();
+                gamePlayer1.setPlayer(player1);
+                gamePlayer1.setGame(game);
+                gamePlayer1.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer1);
+
+                GamePlayer gamePlayer2 = new GamePlayer();
+                gamePlayer2.setPlayer(player2);
+                gamePlayer2.setGame(game);
+                gamePlayer2.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer2);
 
                 Ship ship1 = new Ship();
-                ship1.setShipLocations(Arrays.asList("H1", "H2", "H3", "H4"));
-                ship1.setShipType(shipType2);
-                ship1.setGamePlayer(gamePlayer);
+                ship1.setShipLocations(Arrays.asList("J6", "J7", "J8", "J9","J10"));
+                ship1.setShipType(shipType1);
+                ship1.setGamePlayer(gamePlayer1);
                 shipRepository.save(ship1);
 
                 Ship ship5 = new Ship();
-                ship5.setShipLocations(Arrays.asList("J3","J4","J5","J6","J7"));
+                ship5.setShipLocations(Arrays.asList("D10","E10","F10","G10","H10"));
                 ship5.setShipType(shipType1);
-                ship5.setGamePlayer(gamePlayer);
+                ship5.setGamePlayer(gamePlayer1);
                 shipRepository.save(ship5);
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer1);
+                    salvo.setTurn(1);
+                    salvo.setSalvoLocations(Arrays.asList("J3", "F6"));
+                    salvoRepository.save(salvo);
+                }
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer1);
+                    salvo.setTurn(2);
+                    salvo.setSalvoLocations(Arrays.asList("I7", "H5"));
+                    salvoRepository.save(salvo);
+                }
 
+
+                Ship ship3 = new Ship();
+                ship3.setShipLocations(Arrays.asList("F5","F6"));
+                ship3.setShipType(shipType5);
+                ship3.setGamePlayer(gamePlayer2);
+                shipRepository.save(ship3);
+
+                Ship ship4 = new Ship();
+                ship4.setShipLocations(Arrays.asList("G7","H7","I7"));
+                ship4.setShipType(shipType2);
+                ship4.setGamePlayer(gamePlayer2);
+                shipRepository.save(ship4);
+
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer2);
+                    salvo.setTurn(1);
+                    salvo.setSalvoLocations(Arrays.asList("F10", "J5"));
+                    salvoRepository.save(salvo);
+                }
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer2);
+                    salvo.setTurn(2);
+                    salvo.setSalvoLocations(Arrays.asList("J6", "H10"));
+                    salvoRepository.save(salvo);
+                }
 
             }
 
             {
                 // save a few players
-                Player player = new Player();
-                player.setFirstName("Michelle");
-                player.setLastName("Dessler");
-                player.setUserName("michelle@");
-                player.setPassword("michelle123");
-                playerRepository.save(player);
+                Player player1 = new Player();
+                player1.setFirstName("Kim");
+                player1.setLastName("Bauer");
+                player1.setUserName("kim@gmail.com");
+                player1.setPassword("kim123");
+                playerRepository.save(player1);
+
+                Player player2 = new Player();
+                player2.setFirstName("David");
+                player2.setLastName("Palmer");
+                player2.setUserName("david@");
+                player2.setPassword("david123");
+                playerRepository.save(player2);
 
                 Game game = new Game();
-                game.setCreationDate(newDate.getTime());
+                game.setCreationDate(date.getTime());
                 gameRepository.save(game);
 
-                GamePlayer gamePlayer = new GamePlayer();
-                gamePlayer.setPlayer(player);
-                gamePlayer.setGame(game);
-                gamePlayer.setJoinDate(0);
-                gamePlayerRepository.save(gamePlayer);
+                GamePlayer gamePlayer1 = new GamePlayer();
+                gamePlayer1.setPlayer(player1);
+                gamePlayer1.setGame(game);
+                gamePlayer1.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer1);
+
+                GamePlayer gamePlayer2 = new GamePlayer();
+                gamePlayer2.setPlayer(player2);
+                gamePlayer2.setGame(game);
+                gamePlayer2.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer2);
 
                 Ship ship1 = new Ship();
-                ship1.setShipLocations(Arrays.asList("H1", "H2", "H3", "H4"));
-                ship1.setShipType(shipType1);
-                ship1.setGamePlayer(gamePlayer);
+                ship1.setShipLocations(Arrays.asList("A3", "B3", "C3"));
+                ship1.setShipType(shipType3);
+                ship1.setGamePlayer(gamePlayer1);
                 shipRepository.save(ship1);
 
-                Ship ship2 = new Ship();
-                ship2.setShipLocations(Arrays.asList("A3", "B3", "C3"));
-                ship2.setShipType(shipType3);
-                ship2.setGamePlayer(gamePlayer);
-                shipRepository.save(ship2);
+                Ship ship5 = new Ship();
+                ship5.setShipLocations(Arrays.asList("J3","J4","J5","J6","J7"));
+                ship5.setShipType(shipType1);
+                ship5.setGamePlayer(gamePlayer1);
+                shipRepository.save(ship5);
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer1);
+                    salvo.setTurn(1);
+                    salvo.setSalvoLocations(Arrays.asList("J3", "F6"));
+                    salvoRepository.save(salvo);
+                }
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer1);
+                    salvo.setTurn(2);
+                    salvo.setSalvoLocations(Arrays.asList("I7", "H5"));
+                    salvoRepository.save(salvo);
+                }
 
+
+                Ship ship3 = new Ship();
+                ship3.setShipLocations(Arrays.asList("F5","F6"));
+                ship3.setShipType(shipType5);
+                ship3.setGamePlayer(gamePlayer2);
+                shipRepository.save(ship3);
 
                 Ship ship4 = new Ship();
                 ship4.setShipLocations(Arrays.asList("G7","H7","I7"));
                 ship4.setShipType(shipType2);
-                ship4.setGamePlayer(gamePlayer);
+                ship4.setGamePlayer(gamePlayer2);
                 shipRepository.save(ship4);
 
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer2);
+                    salvo.setTurn(1);
+                    salvo.setSalvoLocations(Arrays.asList("D2", "J5"));
+                    salvoRepository.save(salvo);
+                }
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer2);
+                    salvo.setTurn(2);
+                    salvo.setSalvoLocations(Arrays.asList("G3", "H5"));
+                    salvoRepository.save(salvo);
+                }
 
             }
+
         };
     }
 

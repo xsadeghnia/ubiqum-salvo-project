@@ -25,6 +25,9 @@ public class GamePlayer {
     @OneToMany(mappedBy = "gamePlayer")
     private Set<Ship> ships;
 
+    @OneToMany(mappedBy = "gamePlayer" )
+    private Set<Salvo> salvos;
+
     public GamePlayer() {
     }
 
@@ -68,6 +71,14 @@ public class GamePlayer {
         this.ships = ships;
     }
 
+    public Set<Salvo> getSalvos() {
+        return salvos;
+    }
+
+    public void setSalvos(Set<Salvo> salvos) {
+        this.salvos = salvos;
+    }
+
     @Override
     public String toString() {
         return "GamePlayer{" +
@@ -76,6 +87,7 @@ public class GamePlayer {
                 ", game=" + game +
                 ", joinDate=" + joinDate +
                 ", ships=" + ships +
+                ", salvos=" + salvos +
                 '}';
     }
 }

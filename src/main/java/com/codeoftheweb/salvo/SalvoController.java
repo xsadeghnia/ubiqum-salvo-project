@@ -108,14 +108,18 @@ public class SalvoController {
             public PlayerModel player;
 
         }
+        class SalvoModel{
+            public int turn;
+            public List<String> salvoLocations;
+            public Long playerId;
+        }
         class GameModel{
             public long id;
             public Long creationDate;
             public List<GamePlayerModel> gamePlayers;
             public List<ShipModel> ships;
+            public List<SalvoModel> salvos;
         }
-
-
 
         List<Object> result = new ArrayList<>();
 
@@ -129,27 +133,39 @@ public class SalvoController {
         gameModel.creationDate = game.get().getCreationDate();
 
         List<GamePlayerModel> gplayers = new ArrayList<>();
-        GamePlayerModel gamePlayerModel = new GamePlayerModel();
         List<ShipModel> shipModels = new ArrayList<>();
+        List<SalvoModel> salvoModels = new ArrayList<>();
+        int counter = 0;
         for (GamePlayer gp : game.get().getGamePlayers()){
-          gamePlayerModel.id = gp.getId();
+            GamePlayerModel gamePlayerModel = new GamePlayerModel();
+            gamePlayerModel.id = gp.getId();
           gamePlayerModel.player = new PlayerModel();
           gamePlayerModel.player.id = gp.getPlayer().getId();
           gamePlayerModel.player.email = gp.getPlayer().getUserName();
           gplayers.add(gamePlayerModel);
-            System.out.println(gp.getShips().size());
-          for (Ship ship : gp.getShips()){
-              ShipModel shipModel = new ShipModel();
-              shipModel.shipLocations = ship.getShipLocations();
-              shipModel.type = ship.getShipType().getName();
-              shipModels.add(shipModel);
-              System.out.println(shipModel.type);
+          // TODO: This if should change in the future to (gp.getPlayer().getID() == currentPlayer.getId())
+          if (counter == 0) {
+              for (Ship ship : gp.getShips()) {
+                  ShipModel shipModel = new ShipModel();
+                  shipModel.shipLocations = ship.getShipLocations();
+                  shipModel.type = ship.getShipType().getName();
+                  shipModels.add(shipModel);
+              }
           }
-
-
+          for (Salvo salvo : gp.getSalvos()){
+              SalvoModel salvoModel = new SalvoModel();
+              salvoModel.turn = salvo.getTurn();
+              salvoModel.salvoLocations = salvo.getSalvoLocations();
+              salvoModel.playerId = salvo.getGamePlayer().getPlayer().getId();
+              salvoModels.add(salvoModel);
+          }
+          counter++;
         }
+
+
         gameModel.gamePlayers = gplayers;
         gameModel.ships = shipModels;
+        gameModel.salvos = salvoModels;
 
         result.add(gameModel);
         return result;
