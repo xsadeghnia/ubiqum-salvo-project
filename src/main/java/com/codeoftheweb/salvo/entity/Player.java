@@ -3,6 +3,7 @@ package com.codeoftheweb.salvo.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,6 +19,9 @@ public class Player {
 
     @OneToMany(mappedBy = "player")
     private  Set<GamePlayer> gamePlayers;
+
+    @OneToMany(mappedBy = "player")
+    private List<Score> scores;
 
     public Player() {
     }
@@ -72,6 +76,25 @@ public class Player {
         this.id = id;
     }
 
+    public List<Score> getScores() {
+        return scores;
+    }
+
+    public Double getScores(Game game) {
+        double finalScore = 0;
+        for (Score score : game.getScores()){
+            if(game.getId() == score.getGame().getId()){
+                finalScore = score.getScore();
+            }
+        }
+        return finalScore;
+    }
+
+
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
+    }
+
     @Override
     public String toString() {
         return "Player{" +
@@ -81,6 +104,7 @@ public class Player {
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", gamePlayers=" + gamePlayers +
+                ", scores=" + scores +
                 '}';
     }
 }

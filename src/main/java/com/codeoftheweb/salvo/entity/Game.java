@@ -17,6 +17,9 @@ public class Game {
     @OneToMany(mappedBy = "game")
     private List<GamePlayer> gamePlayers;
 
+    @OneToMany(mappedBy = "game")
+    private List<Score> scores;
+
     public Game() {
     }
 
@@ -45,12 +48,21 @@ public class Game {
         this.id = id;
     }
 
+    public List<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
+    }
+
     @Override
     public String toString() {
         return "Game{" +
                 "id=" + id +
                 ", creationDate=" + creationDate +
                 ", gamePlayers=" + gamePlayers +
+                ", scores=" + scores +
                 '}';
     }
 }

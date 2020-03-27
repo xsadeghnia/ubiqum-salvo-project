@@ -79,6 +79,16 @@ public class GamePlayer {
         this.salvos = salvos;
     }
 
+ public Double getScore(){
+     double finalScore = 0;
+     for (Score score : game.getScores()){
+         if(game.getId() == score.getGame().getId()){
+             finalScore = score.getScore();
+         }
+     }
+     return finalScore;
+ }
+
     @Override
     public String toString() {
         return "GamePlayer{" +

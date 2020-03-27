@@ -2,18 +2,35 @@
 <html>
 <head>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <title>Salvo</title>
 </head>
 
 <body>
  <div id="myVue">
      <ol>
-    <li v-for="game in games">
-        <span>{{convertTimestamp(game.creationDate)}}: </span>
-        <span v-for="gamePlayer in game.gamePlayers"><span>{{gamePlayer.player.email}}, </span></span>
+        <li v-for="game in games">
+            <span>{{convertTimestamp(game.creationDate)}}: </span>
+            <span v-for="gamePlayer in game.gamePlayers"><span>{{gamePlayer.player.email}}, </span></span>
 
-    </li>
+        </li>
      </ol>
+     <table class="score-tbl">
+         <tr>
+             <th>Name</th>
+             <th>Total</th>
+             <th>Won</th>
+             <th>Lost</th>
+             <th>Tied</th>
+         </tr>
+         <tr v-for="score in scores">
+             <td>{{score.username}}</td>
+             <td>{{score.totalScore}}</td>
+             <td>{{score.totalWin}}</td>
+             <td>{{score.totalLoss}}</td>
+             <td>{{score.totalTie}}</td>
+         </tr>
+     </table>
  </div>
 <script src="games.js"></script>
 </body>

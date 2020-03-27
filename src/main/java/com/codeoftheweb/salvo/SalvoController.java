@@ -19,6 +19,9 @@ public class SalvoController {
     @Autowired
     private GameRepository gameRepository;
 
+    @Autowired
+    private PlayerRepository playerRepository;
+
     @RequestMapping("/api/games/id")
     public List<Long> getGameById(){
        List<Game> games = gameRepository.findAll();
@@ -54,18 +57,26 @@ public class SalvoController {
 
     @RequestMapping("/api/games")
     public List<Object> getGames(){
+
+        class ScoreModel{
+            public double score;
+        }
         class PlayerModel {
             public long id;
             public String email;
+            public double score;
         }
         class GamePlayerModel {
             public long id;
             public PlayerModel player;
+//            public double score;
+
         }
         class GameModel{
             public  Long id;
             public  Long creationDate;
-            public List<GamePlayerModel> gamePlayers;
+            public  List<GamePlayerModel> gamePlayers;
+
         }
 
         List<Object> result = new ArrayList<>();
@@ -73,25 +84,64 @@ public class SalvoController {
 
         for(Game game : gamesInfo){
             GameModel gameModel = new GameModel();
-            GamePlayerModel gamePlayerModel = new GamePlayerModel();
             gameModel.id = game.getId();
             gameModel.creationDate = game.getCreationDate();
             List<GamePlayerModel> gPlayers = new ArrayList<>();
             for (GamePlayer gamePlayer : game.getGamePlayers()){
+                GamePlayerModel gamePlayerModel = new GamePlayerModel();
                 gamePlayerModel.id = gamePlayer.getId();
+//                gamePlayerModel.score = gamePlayer.getScore();
                 gamePlayerModel.player = new PlayerModel();
                 gamePlayerModel.player.id = gamePlayer.getPlayer().getId();
                 gamePlayerModel.player.email = gamePlayer.getPlayer().getUserName();
+                gamePlayerModel.player.score = gamePlayer.getPlayer().getScores(game);
+
                 gPlayers.add(gamePlayerModel);
             }
             gameModel.gamePlayers = gPlayers;
 
             result.add(gameModel);
         }
-
         return result;
     }
 
+    @RequestMapping("/api/leaderboard")
+    public List<Object> getleaderboard(){
+        class PlayerModel{
+           public String username;
+           public double totalScore;
+           public int totalWin;
+           public int totalLoss;
+           public int totalTie;
+        }
+
+        List<Object> leaderBoard = new ArrayList<>();
+        List<Player> players = playerRepository.findAll();
+        for (Player player  : players){
+            PlayerModel playerModel = new PlayerModel();
+            playerModel.username = player.getUserName();
+            double totalScore = 0;
+            int totalWin = 0;
+            int totalLoss = 0;
+            int totalTie = 0;
+            for (Score score : player.getScores()){
+                totalScore += score.getScore();
+                if (score.getScore() == 1){
+                    totalWin ++;
+                }else if (score.getScore() == 0){
+                    totalLoss ++;
+                }else if (score.getScore() == 0.5){
+                    totalTie ++;
+                }
+            }
+            playerModel.totalScore = totalScore;
+            playerModel.totalWin = totalWin;
+            playerModel.totalLoss = totalLoss;
+            playerModel.totalTie = totalTie;
+            leaderBoard.add(playerModel);
+        }
+        return leaderBoard;
+    }
 
     @RequestMapping("/api/game_view/{id}")
     public List<Object> getGameView(@PathVariable("id") Long gameId){
