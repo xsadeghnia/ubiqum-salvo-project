@@ -31,3 +31,37 @@
     border : 1px solid gray;
     padding : 2%;
 }
+.whole-page{
+    display :flex;
+    width :100%;
+    flex-direction: column;
+    align-items: center;
+}
+.log-in-row{
+    display : flex;
+    width: 100%;
+}
+.log-in-row button{
+     width: 15%;
+     margin: 5%;
+}
+.info-row{
+    display:flex;
+    width:100%;
+}
+.Log-in-form-holder{
+    display:flex;
+    width:70%;
+    justify-content: center;
+}
+.log-in-form{
+    border : 1px solid lightgray;
+    border-radius: 3%;
+        width: 50%;
+}
+.single-row{
+    display:flex;
+    width:100%;
+    margin-bottom :2%;
+    justify-content: center;
+}

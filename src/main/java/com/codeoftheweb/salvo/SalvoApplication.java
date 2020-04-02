@@ -4,21 +4,33 @@ import com.codeoftheweb.salvo.entity.*;
 import com.codeoftheweb.salvo.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.BeanIds;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
-//import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.security.core.userdetails.UsernameNotFoundException;
-//import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @SpringBootApplication
 public class SalvoApplication extends SpringBootServletInitializer {
@@ -69,7 +81,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
             Player player1 = new Player();
             player1.setFirstName("Jack");
             player1.setLastName("Bauer");
-            player1.setUserName("jack@gamil.com");
+            player1.setUserName("jack@gmail.com");
             player1.setPassword("jack123");
             playerRepository.save(player1);
 
@@ -194,7 +206,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
 
             {
                 Game game = new Game();
-                game.setCreationDate(date.getTime());
+                game.setCreationDate(secondNewDate .getTime());
                 gameRepository.save(game);
 
                 GamePlayer gamePlayer1 = new GamePlayer();
@@ -284,7 +296,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
 
             {
                 Game game = new Game();
-                game.setCreationDate(date.getTime());
+                game.setCreationDate(newDate .getTime());
                 gameRepository.save(game);
 
                 GamePlayer gamePlayer1 = new GamePlayer();
@@ -374,7 +386,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
 
             {
                 Game game = new Game();
-                game.setCreationDate(date.getTime());
+                game.setCreationDate(secondNewDate.getTime());
                 gameRepository.save(game);
 
                 GamePlayer gamePlayer1 = new GamePlayer();
@@ -468,31 +480,80 @@ public class SalvoApplication extends SpringBootServletInitializer {
 
 }
 
+class MyPlayerPrincipal implements UserDetailsService {
 
-//@Configuration
-//class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
-//
-//   public UserDetailsService loadUserByUsername(String userName) throws UsernameNotFoundException {
-//       return new MyPlayerPrincipal();
-//   }
-//}
-//
-//@EnableWebSecurity
-//@Configuration
-//class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-//
-//    @Override
-//     protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeRequests()
-//                .antMatchers("/", "/home").permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//                .formLogin()
-//                .loginPage("/login")
-//                .permitAll()
-//                .and()
-//                .logout()
-//                .permitAll();
-//    }
-//}
+    private static final GrantedAuthority USER_ROLE = new SimpleGrantedAuthority("USER");
+
+    private PlayerRepository playerRepository;
+
+    public MyPlayerPrincipal(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Player player = playerRepository.findByUserName(username);
+        if (player == null) {
+            throw new UsernameNotFoundException(username);
+        }
+        return new User(username , player.getPassword(), Collections.singletonList(USER_ROLE));
+    }
+}
+
+@EnableWebSecurity
+@Configuration
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Override
+     protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers(
+                        "/web/games.html",
+                        "/api/games",
+                        "/api/leaderboard",
+                        "/web/*.js",
+                        "/web/*.css",
+                        "/api/principal"
+                )
+                .permitAll()
+                .antMatchers(HttpMethod.POST, "/api/login")
+                .permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/web/games.html")
+                .permitAll()
+                .and()
+                .logout()
+                .permitAll();
+    }
+
+    @Override
+    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(new PasswordEncoder() {
+            @Override
+            public String encode(CharSequence rawPassword) {
+                return rawPassword.toString();
+            }
+
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                return rawPassword.toString().equals(encodedPassword);
+            }
+        });
+        daoAuthenticationProvider.setUserDetailsService( new MyPlayerPrincipal(playerRepository) );
+        return daoAuthenticationProvider;
+    }
+}

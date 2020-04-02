@@ -5,12 +5,15 @@ import com.codeoftheweb.salvo.repository.GamePlayerRepository;
 import com.codeoftheweb.salvo.repository.GameRepository;
 import com.codeoftheweb.salvo.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.*;
 
 @RestController
@@ -22,6 +25,9 @@ public class SalvoController {
     @Autowired
     private PlayerRepository playerRepository;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @RequestMapping("/api/games/id")
     public List<Long> getGameById(){
        List<Game> games = gameRepository.findAll();
@@ -31,6 +37,7 @@ public class SalvoController {
        }
         return result;
     }
+
     @RequestMapping("/api/games1")
     public Map<Long , Long> getGame1(){
         List<Game> games = gameRepository.findAll();
@@ -221,4 +228,49 @@ public class SalvoController {
         return result;
     }
 
+    static class LoginModel {
+        public String username;
+        public String password;
+
+        public LoginModel() {}
+    }
+    @PostMapping("/api/login")
+    public Object doLogin(@RequestBody LoginModel loginModel){
+        class LoginResultModel{
+            public boolean result;
+            public String message;
+
+            public LoginResultModel(boolean result, String message) {
+                this.result = result;
+                this.message = message;
+            }
+        }
+
+        UsernamePasswordAuthenticationToken authReq
+                = new UsernamePasswordAuthenticationToken(loginModel.username, loginModel.password);
+        try {
+            Authentication auth = authenticationManager.authenticate(authReq);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            return new LoginResultModel(true,"successful");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new LoginResultModel(false,"Authentication failed.");
+        }
+    }
+
+    static class EmptyObject {}
+    @RequestMapping("api/principal")
+    public Object getPrincipal(Principal principal){
+        class PrincipalModel{
+            public boolean noPrincipal;
+            public String username;
+        }
+            PrincipalModel principalModel = new PrincipalModel();
+            principalModel.noPrincipal = true;
+            if (principal != null){
+                principalModel.noPrincipal = false;
+                principalModel.username = principal.getName();
+            }
+            return principalModel;
+    }
 }

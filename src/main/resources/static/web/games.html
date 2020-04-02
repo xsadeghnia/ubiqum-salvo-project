@@ -7,7 +7,15 @@
 </head>
 
 <body>
- <div id="myVue">
+ <div id="myVue" class="whole-page">
+    <div class="log-in-row" v-if="state == 0">
+       <button  v-on:click="state = 1">Log in</button>
+       <button v-on:click="state = 1">Sign Up</button>
+    </div>
+     <div class="log-in-row" v-if="state == 2">
+         <button  v-on:click="state = 0">Log out</button>
+     </div>
+     <div class="info-row" v-if="state == 0 || state == 2">
      <ol>
         <li v-for="game in games">
             <span>{{convertTimestamp(game.creationDate)}}: </span>
@@ -31,6 +39,26 @@
              <td>{{score.totalTie}}</td>
          </tr>
      </table>
+     </div>
+     <div class="Log-in-form-holder" v-if="state == 1">
+         <div class="log-in-form">
+             <div class="single-row" >
+                 <label>Username:</label>
+                 <input type=" text" v-model="username">
+             </div>
+             <div  class="single-row">
+                 <label>Password:</label>
+                 <input type=" text" v-model="password">
+             </div>
+             <div  class="single-row">
+                <button v-on:click="logIn"> Log in</button>
+             </div>
+             <div  class="single-row">
+                 <button v-on:click=""> Sign up</button>
+             </div>
+         </div>
+
+     </div>
  </div>
 <script src="games.js"></script>
 </body>
