@@ -88,21 +88,21 @@ public class SalvoApplication extends SpringBootServletInitializer {
             Player player2 = new Player();
             player2.setFirstName("Chloe");
             player2.setLastName("Brian");
-            player2.setUserName("chloe@yahoo.com");
+            player2.setUserName("chloe@gmail.com");
             player2.setPassword("chloe123");
             playerRepository.save(player2);
 
             Player player3 = new Player();
             player3.setFirstName("Michelle");
             player3.setLastName("Dessler");
-            player3.setUserName("michelle@");
+            player3.setUserName("michelle@gmail.com");
             player3.setPassword("michelle123");
             playerRepository.save(player3);
 
             Player player4 = new Player();
             player4.setFirstName("David");
             player4.setLastName("Palmer");
-            player4.setUserName("david@");
+            player4.setUserName("david@gmail.com");
             player4.setPassword("david123");
             playerRepository.save(player4);
 
@@ -124,11 +124,11 @@ public class SalvoApplication extends SpringBootServletInitializer {
                 gamePlayer1.setJoinDate(0);
                 gamePlayerRepository.save(gamePlayer1);
 
-                GamePlayer gamePlayer2 = new GamePlayer();
-                gamePlayer2.setPlayer(player2);
-                gamePlayer2.setGame(game);
-                gamePlayer2.setJoinDate(0);
-                gamePlayerRepository.save(gamePlayer2);
+//                GamePlayer gamePlayer2 = new GamePlayer();
+//                gamePlayer2.setPlayer(player2);
+//                gamePlayer2.setGame(game);
+//                gamePlayer2.setJoinDate(0);
+//                gamePlayerRepository.save(gamePlayer2);
 
                 Ship ship1 = new Ship();
                 ship1.setShipLocations(Arrays.asList("H1", "H2", "H3", "H4"));
@@ -175,32 +175,32 @@ public class SalvoApplication extends SpringBootServletInitializer {
                 }
 
 
-                Ship ship3 = new Ship();
-                ship3.setShipLocations(Arrays.asList("F5","F6"));
-                ship3.setShipType(shipType5);
-                ship3.setGamePlayer(gamePlayer2);
-                shipRepository.save(ship3);
-
-                Ship ship4 = new Ship();
-                ship4.setShipLocations(Arrays.asList("G7","H7","I7"));
-                ship4.setShipType(shipType2);
-                ship4.setGamePlayer(gamePlayer2);
-                shipRepository.save(ship4);
-
-                {
-                    Salvo salvo = new Salvo();
-                    salvo.setGamePlayer(gamePlayer2);
-                    salvo.setTurn(1);
-                    salvo.setSalvoLocations(Arrays.asList("A2", "I9"));
-                    salvoRepository.save(salvo);
-                }
-                {
-                    Salvo salvo = new Salvo();
-                    salvo.setGamePlayer(gamePlayer2);
-                    salvo.setTurn(2);
-                    salvo.setSalvoLocations(Arrays.asList("H3", "F5"));
-                    salvoRepository.save(salvo);
-                }
+//                Ship ship3 = new Ship();
+//                ship3.setShipLocations(Arrays.asList("F5","F6"));
+//                ship3.setShipType(shipType5);
+//                ship3.setGamePlayer(gamePlayer2);
+//                shipRepository.save(ship3);
+//
+//                Ship ship4 = new Ship();
+//                ship4.setShipLocations(Arrays.asList("G7","H7","I7"));
+//                ship4.setShipType(shipType2);
+//                ship4.setGamePlayer(gamePlayer2);
+//                shipRepository.save(ship4);
+//
+//                {
+//                    Salvo salvo = new Salvo();
+//                    salvo.setGamePlayer(gamePlayer2);
+//                    salvo.setTurn(1);
+//                    salvo.setSalvoLocations(Arrays.asList("A2", "I9"));
+//                    salvoRepository.save(salvo);
+//                }
+//                {
+//                    Salvo salvo = new Salvo();
+//                    salvo.setGamePlayer(gamePlayer2);
+//                    salvo.setTurn(2);
+//                    salvo.setSalvoLocations(Arrays.asList("H3", "F5"));
+//                    salvoRepository.save(salvo);
+//                }
 
             }
 
@@ -299,11 +299,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
                 game.setCreationDate(newDate .getTime());
                 gameRepository.save(game);
 
-                GamePlayer gamePlayer1 = new GamePlayer();
-                gamePlayer1.setPlayer(player5);
-                gamePlayer1.setGame(game);
-                gamePlayer1.setJoinDate(0);
-                gamePlayerRepository.save(gamePlayer1);
+
 
                 GamePlayer gamePlayer2 = new GamePlayer();
                 gamePlayer2.setPlayer(player2);
@@ -311,31 +307,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
                 gamePlayer2.setJoinDate(0);
                 gamePlayerRepository.save(gamePlayer2);
 
-                Ship ship1 = new Ship();
-                ship1.setShipLocations(Arrays.asList("A3", "B3", "C3"));
-                ship1.setShipType(shipType3);
-                ship1.setGamePlayer(gamePlayer1);
-                shipRepository.save(ship1);
 
-                Ship ship5 = new Ship();
-                ship5.setShipLocations(Arrays.asList("J3","J4","J5","J6","J7"));
-                ship5.setShipType(shipType1);
-                ship5.setGamePlayer(gamePlayer1);
-                shipRepository.save(ship5);
-                {
-                    Salvo salvo = new Salvo();
-                    salvo.setGamePlayer(gamePlayer1);
-                    salvo.setTurn(1);
-                    salvo.setSalvoLocations(Arrays.asList("J3", "F6"));
-                    salvoRepository.save(salvo);
-                }
-                {
-                    Salvo salvo = new Salvo();
-                    salvo.setGamePlayer(gamePlayer1);
-                    salvo.setTurn(2);
-                    salvo.setSalvoLocations(Arrays.asList("I7", "H5"));
-                    salvoRepository.save(salvo);
-                }
 
 
                 Ship ship3 = new Ship();
@@ -518,7 +490,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/leaderboard",
                         "/web/*.js",
                         "/web/*.css",
-                        "/api/principal"
+                        "/api/principal",
+                        "/api/signup",
+                        "/api/logout"
                 )
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/api/login")

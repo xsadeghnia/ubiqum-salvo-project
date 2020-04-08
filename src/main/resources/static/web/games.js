@@ -3,11 +3,15 @@
     data:{
         games : [],
         scores :[],
-        state : 0 ,
+        status : "mainstatus",
         loginResult :{},
+        signUpResult : {},
         username : "jack@gmail.com",
         password : "jack123",
-        principal : {},
+        currentPlayer : {},
+        loginErrorMessage : "",
+        currentGamePlayerId : "",
+        gameCreated : {},
     },
     methods:{
         init : async function(){
@@ -25,16 +29,16 @@
                          .then(data => data)
                          .catch(err => err)
 
-             this.principal =  await  fetch('http://localhost:8080/api/principal',{
-                                        methods: "GET",
-                                    })
-                                    .then(res => res.json())
-                                    .then(data => data)
-                                    .catch(err => err)
+             this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
+                                                              methods: "GET",
+                                                          })
+                                                          .then(res => res.json())
+                                                          .then(data => data)
+                                                          .catch(err => err)
 
-             if(!this.principal.noPrincipal)  {
-                this.state = 2 ;
-             }
+               if(!this.currentPlayer.noPrincipal)  {
+                  this.status = "loginedstatus" ;
+               }
         },
         convertTimestamp:function(t) {
             var date = new Date(t * 1000);
@@ -42,7 +46,6 @@
             return formattedDate
         },
         logIn: async function(){
-           this.state = 1;
            var loginObject = {"username": this.username , "password" : this.password};
            this.loginResult = await  fetch('http://localhost:8080/api/login',{
                                     method: "POST",
@@ -56,9 +59,116 @@
                                 .catch(err => err)
            console.log(JSON.stringify(this.loginResult));
            if(this.loginResult.result == true){
-                 this.state = 2;
+                 this.status = "loginedstatus";
+           }else{
+            this.loginErrorMessage = this.loginResult.message;
            }
+             this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
+                                                   methods: "GET",
+                                               })
+                                               .then(res => res.json())
+                                               .then(data => data)
+                                               .catch(err => err)
 
+                        if(!this.currentPlayer.noPrincipal)  {
+                           this.status = "loginedstatus" ;
+                        }
+        },
+        logOut : async function(){
+            this.status = "mainstatus";
+            await  fetch('http://localhost:8080/api/logout',{
+                                        methods: "GET",
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => data)
+                                    .catch(err => err)
+
+
+            this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
+                                                               methods: "GET",
+                                                           })
+                                                           .then(res => res.json())
+                                                           .then(data => data)
+                                                           .catch(err => err)
+        },
+        signUp : async function(){
+//            this.status = "loginstatus";
+            var signUpObject = {"username": this.username , "password" : this.password};
+            this.signUpResult = await  fetch('http://localhost:8080/api/signup',{
+                                    method: "POST",
+                                    body: JSON.stringify(signUpObject),
+                                    headers: {
+                                          'Content-Type': 'application/json'
+                                        },
+                                })
+                                .then(res => res.json())
+                                .then(data => data)
+                                .catch(err => err)
+           console.log(JSON.stringify(this.signUpResult));
+           if(this.signUpResult.result == true){
+                 this.status = "loginstatus";
+           }
+        },
+
+        isCurrentUser : function(gamePlayers){
+            if(!this.currentPlayer.id){
+                return false;
+            }
+            for(var i = 0 ; i < gamePlayers.length ; i++){
+                console.log(this.currentPlayer.id +" " + gamePlayers[i].player.id );
+                if(this.currentPlayer.id == gamePlayers[i].player.id){
+                    this.currentGamePlayerId = gamePlayers[i].id;
+                   return true;
+                }
+            }
+            return false;
+        },
+
+        getGamePlayerLink : function(gamePlayers){
+            for(var i = 0 ; i < gamePlayers.length ; i++){
+               return "http://localhost:8080/web/game.html?gp="+ gamePlayers[i].id;
+            }
+        },
+
+        createGame : async function(){
+            this.gameCreated = await  fetch('http://localhost:8080/api/games',{
+                                method: "POST",
+                                body: {},
+                                headers: {
+                                      'Content-Type': 'application/json'
+                                    },
+                            })
+                            .then(res => res.json())
+                            .then(data => data)
+                            .catch(err => err)
+
+                this.games =  await  fetch('http://localhost:8080/api/games',{
+                                        methods: "GET",
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => data)
+                                    .catch(err => err)
+
+        },
+
+        joinGame : async function(gameId){
+            await  fetch('http://localhost:8080/api/game/'+gameId+'/players',{
+                                            method: "POST",
+                                            body:{},
+                                            headers: {
+                                                  'Content-Type': 'application/json'
+                                                },
+                                        })
+                                        .then(res => res.json())
+                                        .then(data => data)
+                                        .catch(err => err)
+
+               this.games =  await  fetch('http://localhost:8080/api/games',{
+                                                    methods: "GET",
+                                                })
+                                                .then(res => res.json())
+                                                .then(data => data)
+                                                .catch(err => err)
         },
     },
     created: function() {

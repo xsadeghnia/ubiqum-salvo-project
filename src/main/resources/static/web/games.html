@@ -8,21 +8,15 @@
 
 <body>
  <div id="myVue" class="whole-page">
-    <div class="log-in-row" v-if="state == 0">
-       <button  v-on:click="state = 1">Log in</button>
-       <button v-on:click="state = 1">Sign Up</button>
+    <div class="log-in-row" v-if="status == 'mainstatus'">
+       <p class="login-link"  v-on:click="status = 'loginstatus'">Log in</p>
+       <p class="signup-link" v-on:click="status = 'signupstatus'">Sign Up</p>
     </div>
-     <div class="log-in-row" v-if="state == 2">
-         <button  v-on:click="state = 0">Log out</button>
+     <div class="log-in-row" v-if="status == 'loginedstatus'">
+         <span>{{currentPlayer.firstName}} {{currentPlayer.lastName}}</span>
+         <button  v-on:click="logOut ">Log out</button>
      </div>
-     <div class="info-row" v-if="state == 0 || state == 2">
-     <ol>
-        <li v-for="game in games">
-            <span>{{convertTimestamp(game.creationDate)}}: </span>
-            <span v-for="gamePlayer in game.gamePlayers"><span>{{gamePlayer.player.email}}, </span></span>
-
-        </li>
-     </ol>
+     <div class="info-row" v-if="status == 'mainstatus' || status == 'loginedstatus'">
      <table class="score-tbl">
          <tr>
              <th>Name</th>
@@ -32,7 +26,7 @@
              <th>Tied</th>
          </tr>
          <tr v-for="score in scores">
-             <td>{{score.username}}</td>
+             <td>{{score.firstName}} {{score.lastName}}</td>
              <td>{{score.totalScore}}</td>
              <td>{{score.totalWin}}</td>
              <td>{{score.totalLoss}}</td>
@@ -40,8 +34,30 @@
          </tr>
      </table>
      </div>
-     <div class="Log-in-form-holder" v-if="state == 1">
-         <div class="log-in-form">
+     <div class="info-row" v-if="status == 'mainstatus' || status == 'loginedstatus'">
+         <table class="games-tbl">
+             <tr>
+                 <th>Game</th>
+                 <th>Player1</th>
+                 <th>Player2</th>
+                 <th v-if="status == 'loginedstatus'">Status</th>
+             </tr>
+             <tr v-for="game in games">
+                 <td v-if="isCurrentUser(game.gamePlayers)== true"><a :href=" getGamePlayerLink(game.gamePlayers)">{{convertTimestamp(game.creationDate)}}</a></td>
+                 <td v-else>{{convertTimestamp(game.creationDate)}}</td>
+                 <td v-for="gamePlayer in game.gamePlayers" >{{gamePlayer.player.firstName}} {{gamePlayer.player.lastName}}</td>
+                 <td v-if="game.gamePlayers.length == 1"></td>
+                 <td v-if="(game.gamePlayers.length == 0 || game.gamePlayers.length == 1) && status == 'loginedstatus'"> <button v-on:click="joinGame(game.id)">Join Game</button></td>
+                 <td v-if=" game.gamePlayers.length == 2 && status == 'loginedstatus'">Full</td>
+             </tr>
+         </table>
+     </div>
+     <div class="create-btn-holder" v-if="status == 'loginedstatus'" v-on:click="createGame">
+        <button>Create Game</button>
+     </div>
+
+     <div class="Log-in-form-holder" v-if="status == 'loginstatus'">
+         <div class="Log-in-form">
              <div class="single-row" >
                  <label>Username:</label>
                  <input type=" text" v-model="username">
@@ -54,8 +70,33 @@
                 <button v-on:click="logIn"> Log in</button>
              </div>
              <div  class="single-row">
-                 <button v-on:click=""> Sign up</button>
+                 <p class="signup-link" v-on:click="status = 'signupstatus'">Sign Up</p>
              </div>
+             <div class="single-row"> {{loginErrorMessage}}</div>
+         </div>
+
+     </div>
+     <div class="sign-up-form-holder" v-if="status == 'signupstatus'">
+         <div class="sign-up-form">
+             <div class="single-row" >
+                 <label>Firstname:</label>
+                 <input type=" text" v-model="firstname">
+                 <label>Lasttname:</label>
+                 <input type=" text" v-model="lastname">
+             </div>
+             <div class="single-row" >
+                 <label>Username:</label>
+                 <input type=" text" v-model="username">
+             </div>
+             <div  class="single-row">
+                 <label>Password:</label>
+                 <input type=" text" v-model="password">
+             </div>
+             <div  class="single-row">
+                 <button v-on:click="signUp">Sign Up</button>
+             </div>
+
+             <div class="single-row"> {{loginErrorMessage}}</div>
          </div>
 
      </div>

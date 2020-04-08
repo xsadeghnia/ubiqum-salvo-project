@@ -10,6 +10,7 @@
      rows :['','1','2','3','4','5','6','7','8','9','10'],
      columns :['A','B','C','D','E','F','G','H','I','J'],
      parameter :'',
+     currentPlayer : {},
      },
      methods:{
          init : async  function(){
@@ -19,6 +20,14 @@
                                     .then(res => res.json())
                                     .then(data => data)
                                     .catch(err => err)
+
+            this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
+                                       methods: "GET",
+                                   })
+                                   .then(res => res.json())
+                                   .then(data => data)
+                                   .catch(err => err)
+
               for( var i = 0 ; i <  this.game[0].ships.length ; i++){
                     var locs = this.game[0].ships[i].shipLocations
                     for(var j = 0 ; j< locs.length ; j++){
@@ -28,7 +37,7 @@
               for(var k = 0 ; k < this.game[0].salvos.length ; k++){
                 var fireLocations = this.game[0].salvos[k].salvoLocations
                 for(var l = 0; l < fireLocations.length ; l++){
-                    if(this.game[0].salvos[k].playerId == this.game[0].gamePlayers[0].player.id){
+                    if(this.game[0].salvos[k].playerId == this.currentPlayer.id){
                         this.$refs["O" + fireLocations[l]][0].style.backgroundColor ='red';
                         this.$refs["O" + fireLocations[l]][0].innerHTML = this.game[0].salvos[k].turn ;
                     }else{
