@@ -1,7 +1,14 @@
 
 .container{
   display: flex;
-  justify-content: center;
+  flex-flow: wrap;
+}
+.ships-grid-row{
+     display: flex;
+     width:100%;
+     justify-content: center;
+     margin-bottom: 7%;
+
 }
 .row{
     display: flex;
@@ -10,17 +17,34 @@
 .salvo-tbl{
     border-collapse: collapse;
      width: 30%;
-     margin-top: 10%;
      margin-right:7%;
      text-align: center;
      font-family: -webkit-pictograph;
-
 }
 .cell{
     border: 1px solid lightgray;
     width: 10px;
     color: #336335;
     padding: 3%;
+}
+.ship-type-holder{
+    display: flex;
+    width:100%;
+    flex-flow: wrap;
+
+}
+.ship-type-row{
+    display:flex;
+    width:100%;
+    margin: 1%;
+}
+.done-btn-row{
+      display: flex;
+      width:100%;
+}
+.done-btn-row button{
+    width:20%;
+    margin:5%;
 }
 .score-tbl{
    border-collapse: collapse;
@@ -92,4 +116,7 @@
 
 .login-link:hover , .signup-link:hover{
   color: blue;
+}
+.warning{
+    color:red;
 }

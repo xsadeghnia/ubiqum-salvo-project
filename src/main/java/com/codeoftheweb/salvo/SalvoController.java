@@ -1,9 +1,7 @@
 package com.codeoftheweb.salvo;
 
 import com.codeoftheweb.salvo.entity.*;
-import com.codeoftheweb.salvo.repository.GamePlayerRepository;
-import com.codeoftheweb.salvo.repository.GameRepository;
-import com.codeoftheweb.salvo.repository.PlayerRepository;
+import com.codeoftheweb.salvo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +28,12 @@ public class SalvoController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private ShipRepository shipRepository;
+
+    @Autowired
+    private  ShipTypeRepository shipTypeRepository;
 
     @RequestMapping("/api/games/id")
     public List<Long> getGameById(){
@@ -196,7 +200,7 @@ public class SalvoController {
     }
 
     @RequestMapping("/api/game_view/{id}")
-    public List<Object> getGameView(@PathVariable("id") Long gamePlayerId){
+    public List<Object> getGameView(@PathVariable("id") Long gamePlayerId, Principal principal){
         class PlayerModel{
             public Long id;
             public String email;
@@ -247,7 +251,7 @@ public class SalvoController {
           gplayers.add(gamePlayerModel);
 
           // TODO: This if should change in the future to (gp.getPlayer().getID() == currentPlayer.getId())
-          if (counter == 0) {
+          if (gp.getPlayer().getUserName().equals(principal.getName())) {
               for (Ship ship : gp.getShips()) {
                   ShipModel shipModel = new ShipModel();
                   shipModel.shipLocations = ship.getShipLocations();
@@ -262,7 +266,7 @@ public class SalvoController {
               salvoModel.playerId = salvo.getGamePlayer().getPlayer().getId();
               salvoModels.add(salvoModel);
           }
-          counter++;
+
         }
 
 
@@ -403,6 +407,68 @@ public class SalvoController {
         catch (Exception e){
             e.printStackTrace();
             return new JoinGameResultModel(false, "Unsuccessful to join to the game!" );
+        }
+    }
+    static class placingShipModel{
+        public String shipType;
+        public List<String> shipLocations;
+
+        public placingShipModel() {
+        }
+    }
+    @PostMapping("api/games/players/{gamePlayerId}/ships")
+    public Object placingShips(@PathVariable("gamePlayerId") Long gamePlayerId, @RequestBody placingShipModel placingShipModel){
+        class PlacingShipsResultModel{
+            public boolean result;
+            public String message;
+            public int shipCounter;
+
+            public PlacingShipsResultModel(boolean result, String message, int shipCounter) {
+                this.result = result;
+                this.message = message;
+                this.shipCounter = shipCounter;
+            }
+
+            public PlacingShipsResultModel(boolean result, String message) {
+                this.result = result;
+                this.message = message;
+            }
+        }
+        try{
+            Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
+            // TODO: Check gamePlayer for null
+
+            ShipType shipType = shipTypeRepository.findByName(placingShipModel.shipType);
+            Ship ship = new Ship();
+            ship.setShipLocations(placingShipModel.shipLocations);
+            ship.setGamePlayer(gamePlayer.get());
+            ship.setShipType(shipType);
+            boolean overlap = false;
+            for (Ship sh : gamePlayer.get().getShips()){
+                for (String loc : sh.getShipLocations()){
+                    if(ship.getShipLocations().contains(loc)){
+                        overlap = true;
+                        break;
+                    }
+                }
+                if(overlap){
+                    break;
+                }
+
+            }
+            if(overlap){
+              return new PlacingShipsResultModel(false, "There is a overlap,Please select another cells.",0 );
+            }
+            if (gamePlayer.get().getShips().size() > 4 ){
+                return new PlacingShipsResultModel(false, "You should select only 5 ships.",gamePlayer.get().getShips().size() );
+            }
+            shipRepository.save(ship);
+            return new PlacingShipsResultModel(true, "successful to placing ships!",gamePlayer.get().getShips().size());
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new PlacingShipsResultModel(false, "Unsuccessful to placing ships!",0 );
         }
     }
 }

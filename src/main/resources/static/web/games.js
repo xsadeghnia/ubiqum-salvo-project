@@ -3,7 +3,7 @@
     data:{
         games : [],
         scores :[],
-        status : "mainstatus",
+        state : "mainState",
         loginResult :{},
         signUpResult : {},
         username : "jack@gmail.com",
@@ -37,7 +37,7 @@
                                                           .catch(err => err)
 
                if(!this.currentPlayer.noPrincipal)  {
-                  this.status = "loginedstatus" ;
+                  this.state = "loginedState" ;
                }
         },
         convertTimestamp:function(t) {
@@ -59,7 +59,7 @@
                                 .catch(err => err)
            console.log(JSON.stringify(this.loginResult));
            if(this.loginResult.result == true){
-                 this.status = "loginedstatus";
+                 this.state = "loginedState";
            }else{
             this.loginErrorMessage = this.loginResult.message;
            }
@@ -71,11 +71,11 @@
                                                .catch(err => err)
 
                         if(!this.currentPlayer.noPrincipal)  {
-                           this.status = "loginedstatus" ;
+                           this.state = "loginedState" ;
                         }
         },
         logOut : async function(){
-            this.status = "mainstatus";
+            this.state = "mainState";
             await  fetch('http://localhost:8080/api/logout',{
                                         methods: "GET",
                                     })
@@ -92,7 +92,7 @@
                                                            .catch(err => err)
         },
         signUp : async function(){
-//            this.status = "loginstatus";
+//            this.state = "loginState";
             var signUpObject = {"username": this.username , "password" : this.password};
             this.signUpResult = await  fetch('http://localhost:8080/api/signup',{
                                     method: "POST",
@@ -106,7 +106,7 @@
                                 .catch(err => err)
            console.log(JSON.stringify(this.signUpResult));
            if(this.signUpResult.result == true){
-                 this.status = "loginstatus";
+                 this.state = "loginState";
            }
         },
 

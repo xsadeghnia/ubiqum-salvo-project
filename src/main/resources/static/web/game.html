@@ -10,24 +10,64 @@
 <body>
 <div id="myVue">
     <div class="container">
-        <table class="salvo-tbl">
-            <tr>
-                <td class="cell" v-for="row in rows">{{row}}</td>
-            </tr>
-            <tr v-for="column in columns">
-                <td class="cell" v-for="row in rows" :ref="'P'+column+row"><span v-if="row == 0">{{column}}</span></td>
-            </tr>
+        <div class="ships-grid-row">
+            <table class="salvo-tbl">
+                <tr>
+                    <td class="cell" v-for="row in rows">{{row}}</td>
+                </tr>
+                <tr v-for="column in columns">
+                    <td class="cell" v-for="row in rows" :ref="'P'+column+row" v-on:click="cellSelected(column+row)">
+                        <span v-if="row == 0">{{column}}</span>
+                    </td>
+                </tr>
 
-        </table>
-        <table class="salvo-tbl">
-            <tr>
-                <td class="cell" v-for="row in rows">{{row}}</td>
-            </tr>
-            <tr v-for="column in columns">
-                <td class="cell" v-for="row in rows" :ref="'O'+column+row"><span v-if="row == 0">{{column}}</span></td>
-            </tr>
+            </table>
+            <table class="salvo-tbl">
+                <tr>
+                    <td class="cell" v-for="row in rows">{{row}}</td>
+                </tr>
+                <tr v-for="column in columns">
+                    <td class="cell" v-for="row in rows" :ref="'O'+column+row">
+                        <span v-if="row == 0">{{column}}</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="ship-type-holder" v-if="state == 'choosingShips'">
+            <div class="ship-type-row">
+                You should select 5 ships:
+            </div>
+            <div class="ship-type-row">
+                1- Click on a cell in the left grid (Starting point): {{startingPoint}}
+            </div>
+            <div  class="ship-type-row">
+                2- Select a ship type:
+                <select @change="getShipTypeValue($event)">
+                <option value="0">Select</option>
+                <option value="1">Carrier (length:5)</option>
+                <option value="2">Battleship  (length:4)</option>
+                <option value="3">Submarine (length:3)</option>
+                <option value="4">Destroyer   (length:3)</option>
+                <option value="5">Patrol Boat  (length:2)</option>
+            </select>
+            </div>
+            <div class="ship-type-row">
+                3- Select a direction:
+                <select v-model="shipDirection">
+                <option selected = selected>Select</option>
+                <option>Vertical</option>
+                <option>Horizontal</option>
+            </select>
+            </div>
+            <div class="ship-type-row warning warning">
+                {{exceptionMessage}}
+            </div>
+            <div class="done-btn-row">
+                <button v-on:click="placingShips">Done</button>
+            </div>
+        </div>
 
-        </table>
+
     </div>
 </div>
 <script src="game.js"></script>
