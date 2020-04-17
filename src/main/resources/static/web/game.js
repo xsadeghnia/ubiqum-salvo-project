@@ -21,6 +21,7 @@
      currentGamePlayerId : "",
      exceptionMessage : "",
      state : "choosingShips",
+     salvoLocations : [],
      },
      methods:{
          init : async  function(){
@@ -37,6 +38,11 @@
                                    .then(res => res.json())
                                    .then(data => data)
                                    .catch(err => err)
+
+              if(this.game[0].ships.length >= 5 && this.state == "choosingShips"){
+                this.state = "choosingSalvo"
+              }
+
               for( var i = 0 ; i <  this.game[0].ships.length ; i++){
                     var locs = this.game[0].ships[i].shipLocations;
                     for(var j = 0 ; j< locs.length ; j++){
@@ -56,7 +62,6 @@
 
                 }
               }
-              console.log(this.game);
          },
          getShipTypeValue : function(event){
            this.shipTypeValue = event.target.value;
@@ -137,7 +142,7 @@
 
             console.log(result.shipCounter);
             if(result.shipCounter >= 4 ){
-                this.state = "main";
+                this.state = "choosingSalvo";
             }
 
             if(result.result){
@@ -149,7 +154,49 @@
             this.startingPoint = "";
             this.shipDirection = "Select";
 
-         }
+         },
+         shotSelected : function(cell){
+             for(var i = 0; i <  this.game[0].salvos.length; i++){
+                for(var j = 0; j < this.game[0].salvos[i].salvoLocations.length; j++){
+                    if(cell == this.game[0].salvos[i].salvoLocations[j]){
+                        return;
+                    }
+                }
+             }
+             for(var i=0; i < this.salvoLocations.length; i++){
+                if(cell == this.salvoLocations[i]){
+                    this.salvoLocations.splice(i,1);
+                    return;
+                }
+             }
+             if(this.salvoLocations.length >= 5){
+                return;
+             }
+             this.salvoLocations.push(cell);
+
+         },
+         firingSalvos : async function(){
+              this.state = "main";
+              console.log(this.state);
+              this.currentGamePlayerId = this.getURLParameter('gp');
+              var salvoObject = {salvoLocations : this.salvoLocations}
+              var result = await fetch('http://localhost:8080/api/games/players/'+this.currentGamePlayerId+'/salvos',{
+                                method: "POST",
+                                body:JSON.stringify(salvoObject),
+                                headers: {
+                                      'Content-Type': 'application/json'
+                                    },
+                            })
+                            .then(res => res.json())
+                            .then(data => data)
+                            .catch(err => err)
+
+              if(result.result){
+                  this.init();
+              }else{
+                  this.exceptionMessage = result.message;
+              }
+         },
      },
      created: function() {
         this.parameter = this.$route.query

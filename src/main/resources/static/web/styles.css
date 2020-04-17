@@ -120,3 +120,16 @@
 .warning{
     color:red;
 }
+.salvo-holder{
+    display: flex;
+    width:100%;
+    flex-flow: wrap;
+}
+.salvo-row{
+   display:flex;
+   width:100%;
+   margin: 1%;
+}
+.salvo-row span{
+    margin-right : 1%;
+}

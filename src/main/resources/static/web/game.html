@@ -27,7 +27,7 @@
                     <td class="cell" v-for="row in rows">{{row}}</td>
                 </tr>
                 <tr v-for="column in columns">
-                    <td class="cell" v-for="row in rows" :ref="'O'+column+row">
+                    <td class="cell" v-for="row in rows" :ref="'O'+column+row" v-on:click="shotSelected(column+row)">
                         <span v-if="row == 0">{{column}}</span>
                     </td>
                 </tr>
@@ -59,14 +59,27 @@
                 <option>Horizontal</option>
             </select>
             </div>
-            <div class="ship-type-row warning warning">
+            <div class="ship-type-row warning">
                 {{exceptionMessage}}
             </div>
             <div class="done-btn-row">
                 <button v-on:click="placingShips">Done</button>
             </div>
         </div>
-
+        <div class="salvo-holder" v-if="state == 'choosingSalvo'">
+            <div class="salvo-row">
+                You can select up to 5 shots in the right grid:
+            </div>
+            <div class="salvo-row">
+                shots:{<span v-for="shot in salvoLocations">{{shot}}</span>}
+            </div>
+            <div class="salvo-row  warning">
+               {{exceptionMessage}}
+            </div>
+            <div class="salvo-row">
+               <button v-on:click="firingSalvos" >Done</button>
+            </div>
+        </div>
 
     </div>
 </div>

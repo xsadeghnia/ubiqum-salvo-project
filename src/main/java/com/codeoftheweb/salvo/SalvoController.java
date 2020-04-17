@@ -35,6 +35,9 @@ public class SalvoController {
     @Autowired
     private  ShipTypeRepository shipTypeRepository;
 
+    @Autowired
+    private SalvoRepository salvoRepository;
+
     @RequestMapping("/api/games/id")
     public List<Long> getGameById(){
        List<Game> games = gameRepository.findAll();
@@ -241,7 +244,6 @@ public class SalvoController {
         List<GamePlayerModel> gplayers = new ArrayList<>();
         List<ShipModel> shipModels = new ArrayList<>();
         List<SalvoModel> salvoModels = new ArrayList<>();
-        int counter = 0;
         for (GamePlayer gp : gamePlayer.get().getGame().getGamePlayers()){
             GamePlayerModel gamePlayerModel = new GamePlayerModel();
             gamePlayerModel.id = gp.getId();
@@ -250,7 +252,6 @@ public class SalvoController {
           gamePlayerModel.player.email = gp.getPlayer().getUserName();
           gplayers.add(gamePlayerModel);
 
-          // TODO: This if should change in the future to (gp.getPlayer().getID() == currentPlayer.getId())
           if (gp.getPlayer().getUserName().equals(principal.getName())) {
               for (Ship ship : gp.getShips()) {
                   ShipModel shipModel = new ShipModel();
@@ -469,6 +470,46 @@ public class SalvoController {
         catch (Exception e){
             e.printStackTrace();
             return new PlacingShipsResultModel(false, "Unsuccessful to placing ships!",0 );
+        }
+    }
+    static class SalvoModel{
+        public List<String> salvoLocations;
+
+        public SalvoModel() {
+        }
+    }
+    @PostMapping("/api/games/players/{gamePlayerId}/salvos")
+    public Object firingSalvo(@PathVariable("gamePlayerId") Long gamePlayerId,@RequestBody SalvoModel salvoModel){
+        class SalvoResultModel{
+            public boolean result;
+            public String message;
+            public int salvoCounter;
+
+            public SalvoResultModel(boolean result, String message, int salvoCounter) {
+                this.result = result;
+                this.message = message;
+                this.salvoCounter = salvoCounter;
+            }
+        }
+        try {
+            Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
+            // TODO: Check gamePlayer for null
+
+
+            Salvo salvo = new Salvo();
+            salvo.setTurn(gamePlayer.get().getSalvos().size()+1);
+            salvo.setGamePlayer(gamePlayer.get());
+            salvo.setSalvoLocations(salvoModel.salvoLocations);
+
+            if (salvo.getSalvoLocations().size() > 5){
+                return new  SalvoResultModel(false,"You can only select 5 shots.",salvo.getSalvoLocations().size());
+            }
+            salvoRepository.save(salvo);
+            return new  SalvoResultModel(true,"Successful", salvo.getSalvoLocations().size());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new  SalvoResultModel(false,"Unsuccessful to firing salvo!", 0);
         }
     }
 }
