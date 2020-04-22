@@ -80,7 +80,32 @@
                <button v-on:click="firingSalvos" >Done</button>
             </div>
         </div>
-
+        <div class="result_holder" v-if="state == 'choosingSalvo'">
+            <table class="player-result">
+                <tr>
+                    <th>Turn</th>
+                    <th>Hits</th>
+                    <th>Left</th>
+                </tr>
+                <tr v-for="hit in hitsOnMe">
+                    <td>{{hit.turn}}</td>
+                    <td >{{hit.hits}}</td>
+                    <td>{{hit.left}}</td>
+                </tr>
+            </table>
+            <table class="player-result">
+                <tr>
+                    <th>Turn</th>
+                    <th>Hits</th>
+                    <th>Left</th>
+                </tr>
+                <tr v-for="hit in hitsOnOpp">
+                    <td>{{hit.turn}}</td>
+                    <td >{{hit.hits}}</td>
+                    <td>{{hit.left}}</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
 <script src="game.js"></script>

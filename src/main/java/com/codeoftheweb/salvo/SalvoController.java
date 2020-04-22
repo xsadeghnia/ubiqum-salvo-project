@@ -202,6 +202,53 @@ public class SalvoController {
         return leaderBoard;
     }
 
+
+    class HitModel{
+        public String shipType;
+        public int nrOfHits;
+        public boolean sink;
+    }
+    private List<HitModel> getHits(List<Ship> ships, List<Salvo> accumSalvos, Salvo salvo){
+        List<HitModel> hitModels = new ArrayList<>();
+        accumSalvos.add(salvo);
+        for (Ship ship : ships){
+
+            HitModel hitModel = new HitModel();
+
+            // Calculate hit locations
+            hitModel.nrOfHits = 0;
+            hitModel.shipType = ship.getShipType().getName();
+            hitModel.sink = false;
+            for (String shipLoc :  ship.getShipLocations()) {
+                for (String salvoLoc : salvo.getSalvoLocations()) {
+                    if (shipLoc.equals(salvoLoc)) {
+                        hitModel.nrOfHits++;
+                    }
+                }
+            }
+
+            // Check if it is sunk
+            int counter = 0;
+            for (String shipLoc : ship.getShipLocations()) {
+                for (Salvo s : accumSalvos) {
+                    for (String salvoLoc : s.getSalvoLocations()) {
+                        if (shipLoc.equals(salvoLoc)) {
+                            counter++;
+                        }
+                    }
+                }
+            }
+            if (counter == ship.getShipType().getLength()){
+                hitModel.sink = true;
+            }
+
+            if (hitModel.nrOfHits > 0) {
+                hitModels.add(hitModel);
+            }
+        }
+        return hitModels;
+    }
+
     @RequestMapping("/api/game_view/{id}")
     public List<Object> getGameView(@PathVariable("id") Long gamePlayerId, Principal principal){
         class PlayerModel{
@@ -222,28 +269,37 @@ public class SalvoController {
             public List<String> salvoLocations;
             public Long playerId;
         }
+        class GameResultModel{
+            public int turn;
+            public List<HitModel> hits;
+            public int nrOfShipsLeft;
+        }
         class GameModel{
             public long id;
             public Long creationDate;
             public List<GamePlayerModel> gamePlayers;
             public List<ShipModel> ships;
             public List<SalvoModel> salvos;
+            public List<GameResultModel> playerGameResult;
+            public List<GameResultModel> opponentGameResult;
         }
 
         List<Object> result = new ArrayList<>();
 
         Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
-        if (!gamePlayer.isPresent()){
+        if (!gamePlayer.isPresent()) {
 
         }
-
-        GameModel gameModel = new GameModel();
-        gameModel.id = gamePlayer.get().getGame().getId();
-        gameModel.creationDate = gamePlayer.get().getGame().getCreationDate();
+        GamePlayer opponentGamePlayer = null;
+        if (gamePlayer.get().getGame().getGamePlayers().size() > 1) {
+            opponentGamePlayer = gamePlayer.get() == gamePlayer.get().getGame().getGamePlayers().get(0) ?
+                    gamePlayer.get().getGame().getGamePlayers().get(1) : gamePlayer.get().getGame().getGamePlayers().get(0);
+        }
 
         List<GamePlayerModel> gplayers = new ArrayList<>();
         List<ShipModel> shipModels = new ArrayList<>();
         List<SalvoModel> salvoModels = new ArrayList<>();
+
         for (GamePlayer gp : gamePlayer.get().getGame().getGamePlayers()){
             GamePlayerModel gamePlayerModel = new GamePlayerModel();
             gamePlayerModel.id = gp.getId();
@@ -270,10 +326,52 @@ public class SalvoController {
 
         }
 
+        List<GameResultModel> playerGameResultModels =new ArrayList<>();
+        List<GameResultModel> opponentGameResultModels =new ArrayList<>();
+        if (opponentGamePlayer != null) {
+            int currentNrOfShips = 5;
+            List<Salvo> accumSalvos = new ArrayList<>();
+            List<Salvo> salvos = opponentGamePlayer.getSalvos();
+            salvos.sort(Comparator.comparingInt(Salvo::getTurn));
+            for (Salvo salvo : salvos) {
+                GameResultModel gameResultModel = new GameResultModel();
+                gameResultModel.turn = salvo.getTurn();
+                gameResultModel.hits = getHits(gamePlayer.get().getShips(), accumSalvos, salvo);
+                for (HitModel hm : gameResultModel.hits) {
+                    if (hm.sink) {
+                        currentNrOfShips--;
+                    }
+                }
+                gameResultModel.nrOfShipsLeft = currentNrOfShips;
+                playerGameResultModels.add(gameResultModel);
+            }
 
+            currentNrOfShips = 5;
+            accumSalvos.clear();
+            salvos = gamePlayer.get().getSalvos();
+            salvos.sort(Comparator.comparingInt(Salvo::getTurn));
+            for (Salvo salvo : salvos) {
+                GameResultModel gameResultModel = new GameResultModel();
+                gameResultModel.turn = salvo.getTurn();
+                gameResultModel.hits = getHits(opponentGamePlayer.getShips(), accumSalvos, salvo);
+                for (HitModel hm : gameResultModel.hits) {
+                    if (hm.sink) {
+                        currentNrOfShips--;
+                    }
+                }
+                gameResultModel.nrOfShipsLeft = currentNrOfShips;
+                opponentGameResultModels.add(gameResultModel);
+            }
+        }
+
+        GameModel gameModel = new GameModel();
+        gameModel.id = gamePlayer.get().getGame().getId();
+        gameModel.creationDate = gamePlayer.get().getGame().getCreationDate();
         gameModel.gamePlayers = gplayers;
         gameModel.ships = shipModels;
         gameModel.salvos = salvoModels;
+        gameModel.playerGameResult = playerGameResultModels;
+        gameModel.opponentGameResult = opponentGameResultModels;
 
         result.add(gameModel);
         return result;

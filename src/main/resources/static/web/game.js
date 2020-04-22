@@ -22,7 +22,9 @@
      exceptionMessage : "",
      state : "choosingShips",
      salvoLocations : [],
-     },
+     hitsOnMe : [],
+     hitsOnOpp: []
+  },
      methods:{
          init : async  function(){
             this.game = await  fetch('http://localhost:8080/api/game_view/'+this.parameter.gp,{
@@ -62,6 +64,7 @@
 
                 }
               }
+              this.getHits();
          },
          getShipTypeValue : function(event){
            this.shipTypeValue = event.target.value;
@@ -176,8 +179,7 @@
 
          },
          firingSalvos : async function(){
-              this.state = "main";
-              console.log(this.state);
+
               this.currentGamePlayerId = this.getURLParameter('gp');
               var salvoObject = {salvoLocations : this.salvoLocations}
               var result = await fetch('http://localhost:8080/api/games/players/'+this.currentGamePlayerId+'/salvos',{
@@ -196,7 +198,47 @@
               }else{
                   this.exceptionMessage = result.message;
               }
+              this.salvoLocations = [];
          },
+         getHits : function(){
+             this.hitsOnMe = [];
+             for(var i = 0; i < this.game[0].playerGameResult.length; i++){
+                var x = this.game[0].playerGameResult[i];
+                var turn = x.turn;
+                var hits = "";
+                x.hits.forEach(function(h) {
+                    hits += h.shipType + " (" + h.nrOfHits + ")";
+                });
+                var left = this.game[0].playerGameResult[i].nrOfShipsLeft;
+                this.hitsOnMe.push({"turn" : turn, "hits" : hits, "left" : left});
+             }
+             this.hitsOnMe.sort(function(a, b) {
+                if (a.turn == b.turn) { return 0; }
+                if (a.turn < b.turn) { return 1; }
+                if (a.turn > b.turn) { return -1; }
+             });
+
+              this.hitsOnOpp = [];
+              for(var i = 0; i < this.game[0].opponentGameResult.length; i++){
+                 var x = this.game[0].opponentGameResult[i];
+                 var turn = x.turn;
+                 var hits = "";
+                 x.hits.forEach(function(h) {
+                     hits += h.shipType + " (" + h.nrOfHits + ")";
+                 });
+                 var left = this.game[0].opponentGameResult[i].nrOfShipsLeft;
+                 this.hitsOnOpp.push({"turn" : turn, "hits" : hits, "left" : left});
+              }
+              this.hitsOnOpp.sort(function(a, b) {
+                 if (a.turn == b.turn) { return 0; }
+                 if (a.turn < b.turn) { return 1; }
+                 if (a.turn > b.turn) { return -1; }
+              });
+         }
+
+     },
+     computed: {
+
      },
      created: function() {
         this.parameter = this.$route.query

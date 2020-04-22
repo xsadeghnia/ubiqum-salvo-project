@@ -124,11 +124,11 @@ public class SalvoApplication extends SpringBootServletInitializer {
                 gamePlayer1.setJoinDate(0);
                 gamePlayerRepository.save(gamePlayer1);
 
-//                GamePlayer gamePlayer2 = new GamePlayer();
-//                gamePlayer2.setPlayer(player2);
-//                gamePlayer2.setGame(game);
-//                gamePlayer2.setJoinDate(0);
-//                gamePlayerRepository.save(gamePlayer2);
+                GamePlayer gamePlayer2 = new GamePlayer();
+                gamePlayer2.setPlayer(player2);
+                gamePlayer2.setGame(game);
+                gamePlayer2.setJoinDate(0);
+                gamePlayerRepository.save(gamePlayer2);
 
                 Ship ship1 = new Ship();
                 ship1.setShipLocations(Arrays.asList("H1", "H2", "H3", "H4"));
@@ -141,6 +141,24 @@ public class SalvoApplication extends SpringBootServletInitializer {
                 ship5.setShipType(shipType1);
                 ship5.setGamePlayer(gamePlayer1);
                 shipRepository.save(ship5);
+
+                Ship ship6 = new Ship();
+                ship6.setShipLocations(Arrays.asList("F10", "G10", "H10", "I10"));
+                ship6.setShipType(shipType2);
+                ship6.setGamePlayer(gamePlayer1);
+                shipRepository.save(ship6);
+
+                Ship ship7 = new Ship();
+                ship7.setShipLocations(Arrays.asList("A10", "B10", "C10", "D10"));
+                ship7.setShipType(shipType2);
+                ship7.setGamePlayer(gamePlayer1);
+                shipRepository.save(ship7);
+
+                Ship ship8 = new Ship();
+                ship8.setShipLocations(Arrays.asList("E2", "E3", "E4", "E5"));
+                ship8.setShipType(shipType2);
+                ship8.setGamePlayer(gamePlayer1);
+                shipRepository.save(ship8);
 
                 {
                     Score score = new Score();
@@ -175,32 +193,50 @@ public class SalvoApplication extends SpringBootServletInitializer {
                 }
 
 
-//                Ship ship3 = new Ship();
-//                ship3.setShipLocations(Arrays.asList("F5","F6"));
-//                ship3.setShipType(shipType5);
-//                ship3.setGamePlayer(gamePlayer2);
-//                shipRepository.save(ship3);
-//
-//                Ship ship4 = new Ship();
-//                ship4.setShipLocations(Arrays.asList("G7","H7","I7"));
-//                ship4.setShipType(shipType2);
-//                ship4.setGamePlayer(gamePlayer2);
-//                shipRepository.save(ship4);
-//
-//                {
-//                    Salvo salvo = new Salvo();
-//                    salvo.setGamePlayer(gamePlayer2);
-//                    salvo.setTurn(1);
-//                    salvo.setSalvoLocations(Arrays.asList("A2", "I9"));
-//                    salvoRepository.save(salvo);
-//                }
-//                {
-//                    Salvo salvo = new Salvo();
-//                    salvo.setGamePlayer(gamePlayer2);
-//                    salvo.setTurn(2);
-//                    salvo.setSalvoLocations(Arrays.asList("H3", "F5"));
-//                    salvoRepository.save(salvo);
-//                }
+                Ship ship3 = new Ship();
+                ship3.setShipLocations(Arrays.asList("F5","F6"));
+                ship3.setShipType(shipType5);
+                ship3.setGamePlayer(gamePlayer2);
+                shipRepository.save(ship3);
+
+                Ship ship4 = new Ship();
+                ship4.setShipLocations(Arrays.asList("G7","H7","I7"));
+                ship4.setShipType(shipType3);
+                ship4.setGamePlayer(gamePlayer2);
+                shipRepository.save(ship4);
+
+                Ship ship55 = new Ship();
+                ship55.setShipLocations(Arrays.asList("A1","B1","C1"));
+                ship55.setShipType(shipType3);
+                ship55.setGamePlayer(gamePlayer2);
+                shipRepository.save(ship55);
+
+                Ship ship56 = new Ship();
+                ship56.setShipLocations(Arrays.asList("F10","G10","H10"));
+                ship56.setShipType(shipType3);
+                ship56.setGamePlayer(gamePlayer2);
+                shipRepository.save(ship56);
+
+                Ship ship57 = new Ship();
+                ship57.setShipLocations(Arrays.asList("C4","C5","C6"));
+                ship57.setShipType(shipType3);
+                ship57.setGamePlayer(gamePlayer2);
+                shipRepository.save(ship57);
+
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer2);
+                    salvo.setTurn(1);
+                    salvo.setSalvoLocations(Arrays.asList("A2", "I9"));
+                    salvoRepository.save(salvo);
+                }
+                {
+                    Salvo salvo = new Salvo();
+                    salvo.setGamePlayer(gamePlayer2);
+                    salvo.setTurn(2);
+                    salvo.setSalvoLocations(Arrays.asList("H3", "F5"));
+                    salvoRepository.save(salvo);
+                }
 
             }
 

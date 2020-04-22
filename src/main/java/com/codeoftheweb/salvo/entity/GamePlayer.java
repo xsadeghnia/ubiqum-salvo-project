@@ -3,6 +3,7 @@ package com.codeoftheweb.salvo.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,10 +24,10 @@ public class GamePlayer {
     private long joinDate;
 
     @OneToMany(mappedBy = "gamePlayer")
-    private Set<Ship> ships;
+    private List<Ship> ships;
 
     @OneToMany(mappedBy = "gamePlayer" )
-    private Set<Salvo> salvos;
+    private List<Salvo> salvos;
 
     public GamePlayer() {
     }
@@ -63,23 +64,23 @@ public class GamePlayer {
         this.id = id;
     }
 
-    public Set<Ship> getShips() {
+    public List<Ship> getShips() {
         return ships;
     }
 
-    public void setShips(Set<Ship> ships) {
+    public void setShips(List<Ship> ships) {
         this.ships = ships;
     }
 
-    public Set<Salvo> getSalvos() {
+    public List<Salvo> getSalvos() {
         return salvos;
     }
 
-    public void setSalvos(Set<Salvo> salvos) {
+    public void setSalvos(List<Salvo> salvos) {
         this.salvos = salvos;
     }
 
- public Double getScore(){
+    public Double getScore(){
      double finalScore = 0;
      for (Score score : game.getScores()){
          if(game.getId() == score.getGame().getId()){

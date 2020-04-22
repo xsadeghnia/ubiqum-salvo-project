@@ -126,8 +126,11 @@
 
         getGamePlayerLink : function(gamePlayers){
             for(var i = 0 ; i < gamePlayers.length ; i++){
-               return "http://localhost:8080/web/game.html?gp="+ gamePlayers[i].id;
+                if(gamePlayers[i].player.email == this.currentPlayer.username) {
+                    return "http://localhost:8080/web/game.html?gp="+ gamePlayers[i].id;
+                }
             }
+            return "";
         },
 
         createGame : async function(){
