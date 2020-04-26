@@ -8,6 +8,13 @@ import java.util.Set;
 
 @Entity
 public class Game {
+
+    public static final int Unknown = 0;
+    public static final int EnterShips = 1;
+    public static final int GameOver = 2;
+    public static final int IndexZeroSalvo = 3;
+    public static final int IndexOneSalvo = 4;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
@@ -20,9 +27,10 @@ public class Game {
     @OneToMany(mappedBy = "game")
     private List<Score> scores;
 
+    private int state;
+
     public Game() {
     }
-
 
     public long getCreationDate() {
         return creationDate;
@@ -46,6 +54,14 @@ public class Game {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 
     public List<Score> getScores() {

@@ -38,39 +38,39 @@ public class SalvoController {
     @Autowired
     private SalvoRepository salvoRepository;
 
-    @RequestMapping("/api/games/id")
-    public List<Long> getGameById(){
-       List<Game> games = gameRepository.findAll();
-       List<Long> result = new ArrayList<>();
-       for(Game game : games){
-           result.add(game.getId());
-       }
-        return result;
-    }
-
-    @RequestMapping("/api/games1")
-    public Map<Long , Long> getGame1(){
-        List<Game> games = gameRepository.findAll();
-        Map<Long , Long> result = new HashMap<>();
-        for(Game game : games){
-            result.put(game.getId(), game.getCreationDate());
-        }
-        return result;
-    }
-
-    @RequestMapping("/api/games2")
-    public List<Map<String,Object>> getGame2(){
-        List<Map<String, Object>> result = new ArrayList<>();
-        List<Game> gamesInfo = gameRepository.findAll();
-        for(Game game : gamesInfo){
-            Map<String, Object> games = new HashMap<>();
-            games.put("id" , game.getId());
-            games.put("created", game.getCreationDate());
-            result.add(games);
-        }
-
-        return result;
-    }
+//    @RequestMapping("/api/games/id")
+//    public List<Long> getGameById(){
+//       List<Game> games = gameRepository.findAll();
+//       List<Long> result = new ArrayList<>();
+//       for(Game game : games){
+//           result.add(game.getId());
+//       }
+//        return result;
+//    }
+//
+//    @RequestMapping("/api/games1")
+//    public Map<Long , Long> getGame1(){
+//        List<Game> games = gameRepository.findAll();
+//        Map<Long , Long> result = new HashMap<>();
+//        for(Game game : games){
+//            result.put(game.getId(), game.getCreationDate());
+//        }
+//        return result;
+//    }
+//
+//    @RequestMapping("/api/games2")
+//    public List<Map<String,Object>> getGame2(){
+//        List<Map<String, Object>> result = new ArrayList<>();
+//        List<Game> gamesInfo = gameRepository.findAll();
+//        for(Game game : gamesInfo){
+//            Map<String, Object> games = new HashMap<>();
+//            games.put("id" , game.getId());
+//            games.put("created", game.getCreationDate());
+//            result.add(games);
+//        }
+//
+//        return result;
+//    }
 
     @GetMapping("/api/games")
     public List<Object> getGames(){
@@ -143,6 +143,7 @@ public class SalvoController {
 
             Game game = new Game();
             game.setCreationDate(new Date().getTime());
+            game.setState(Game.Unknown);
             gameRepository.save(game);
 
             GamePlayer gamePlayer = new GamePlayer();
@@ -303,10 +304,10 @@ public class SalvoController {
         for (GamePlayer gp : gamePlayer.get().getGame().getGamePlayers()){
             GamePlayerModel gamePlayerModel = new GamePlayerModel();
             gamePlayerModel.id = gp.getId();
-          gamePlayerModel.player = new PlayerModel();
-          gamePlayerModel.player.id = gp.getPlayer().getId();
-          gamePlayerModel.player.email = gp.getPlayer().getUserName();
-          gplayers.add(gamePlayerModel);
+            gamePlayerModel.player = new PlayerModel();
+            gamePlayerModel.player.id = gp.getPlayer().getId();
+            gamePlayerModel.player.email = gp.getPlayer().getUserName();
+            gplayers.add(gamePlayerModel);
 
           if (gp.getPlayer().getUserName().equals(principal.getName())) {
               for (Ship ship : gp.getShips()) {
@@ -486,20 +487,30 @@ public class SalvoController {
             // TODO: Check player for null
 
            Optional<Game> game = gameRepository.findById(gameId);
-           if(!game.isPresent()){
-               return new JoinGameResultModel(false, "No such game!" );
-           }
+
+            if(!game.isPresent()){
+                return new JoinGameResultModel(false, "No such game!" );
+            }
 
             List<GamePlayer> gamePlayers = game.get().getGamePlayers();
+            int oldNrOfGamePlayers = gamePlayers.size();
+
             if(gamePlayers.size() > 1){
                 return new JoinGameResultModel(false,  "Game is full" );
             }
+
 
             GamePlayer gamePlayer = new GamePlayer();
             gamePlayer.setPlayer(player);
             gamePlayer.setGame(game.get());
             gamePlayer.setJoinDate(new Date().getTime());
             gamePlayerRepository.save(gamePlayer);
+
+            if (oldNrOfGamePlayers == 1){
+                System.out.println("SETTTTT");
+                game.get().setState(Game.EnterShips);
+                gameRepository.save(game.get());
+            }
 
             return new JoinGameResultModel(true, "successful");
         }
@@ -562,6 +573,14 @@ public class SalvoController {
                 return new PlacingShipsResultModel(false, "You should select only 5 ships.",gamePlayer.get().getShips().size() );
             }
             shipRepository.save(ship);
+
+            // opponent 5 ta dare ya na?
+            if(gamePlayer.get().getGame().getGamePlayers().get(0).getShips().size() > 4 &&
+                    gamePlayer.get().getGame().getGamePlayers().get(1).getShips().size() > 4 ){
+                gamePlayer.get().getGame().setState(Game.IndexZeroSalvo);
+
+            }
+
             return new PlacingShipsResultModel(true, "successful to placing ships!",gamePlayer.get().getShips().size());
 
         }
@@ -609,5 +628,45 @@ public class SalvoController {
             e.printStackTrace();
             return new  SalvoResultModel(false,"Unsuccessful to firing salvo!", 0);
         }
+    }
+    @RequestMapping("/api/state/{gamePlayerId}")
+    public Object getState(@PathVariable("gamePlayerId") Long gamePlayerId, Principal principal){
+        class ResultObject{
+            public int state;
+
+            public ResultObject(int state) {
+                this.state = state;
+            }
+        }
+
+        Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
+        if (!gamePlayer.isPresent()) {
+
+        }
+
+        System.out.println(">>>> " + gamePlayer.get().getGame().getId());
+        System.out.println(">>>> " + gamePlayer.get().getGame().getState());
+        switch (gamePlayer.get().getGame().getState()) {
+            case Game.Unknown:
+                return new ResultObject(Game.Unknown);
+            case Game.EnterShips:
+                return new ResultObject(Game.EnterShips);
+            case Game.GameOver:
+                return new ResultObject(Game.GameOver);
+            case Game.IndexZeroSalvo:
+                if (gamePlayer.get().getGame().getGamePlayers().get(0).getPlayer().getUserName().equals(principal.getName())) {
+                    return new ResultObject(10); // Salvo
+                } else {
+                    return new ResultObject(20);// Wait
+                }
+            case Game.IndexOneSalvo:
+                if (gamePlayer.get().getGame().getGamePlayers().get(1).getPlayer().getUserName().equals(principal.getName())) {
+                    return new ResultObject(10); // Salvo
+                } else {
+                    return new ResultObject(20);// Wait
+                }
+        }
+        return new ResultObject(Game.Unknown);
+
     }
 }

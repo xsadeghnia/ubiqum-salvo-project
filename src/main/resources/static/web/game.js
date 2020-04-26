@@ -2,7 +2,7 @@
     mode: 'history',
     routes: [],
   });
-  new Vue({
+ const api =  new Vue({
       router,
      el:"#myVue",
      data:{
@@ -26,46 +26,52 @@
      hitsOnOpp: []
   },
      methods:{
-         init : async  function(){
-            this.game = await  fetch('http://localhost:8080/api/game_view/'+this.parameter.gp,{
-                                        methods: "GET",
-                                    })
-                                    .then(res => res.json())
-                                    .then(data => data)
-                                    .catch(err => err)
+         updateGrid : async function(){
+                this.game = await  fetch('http://localhost:8080/api/game_view/'+this.parameter.gp,{
+                            methods: "GET",
+                        })
+                        .then(res => res.json())
+                        .then(data => data)
+                        .catch(err => err)
 
+                 if(this.game[0].ships.length >= 5 && this.state == "choosingShips"){
+                                this.state = "choosingSalvo"
+                              }
+
+                for( var i = 0 ; i <  this.game[0].ships.length ; i++){
+                        var locs = this.game[0].ships[i].shipLocations;
+                        for(var j = 0 ; j< locs.length ; j++){
+                            this.$refs["P" + locs[j]][0].style.backgroundColor = '#66bb6a';
+                        }
+                }
+                for(var k = 0 ; k < this.game[0].salvos.length ; k++){
+                    var fireLocations = this.game[0].salvos[k].salvoLocations
+                    for(var l = 0; l < fireLocations.length ; l++){
+                        if(this.game[0].salvos[k].playerId == this.currentPlayer.id){
+                            this.$refs["O" + fireLocations[l]][0].style.backgroundColor ='red';
+                            this.$refs["O" + fireLocations[l]][0].innerHTML = this.game[0].salvos[k].turn ;
+                        }else{
+                            this.$refs["P" + fireLocations[l]][0].style.backgroundColor ='red';
+                            this.$refs["P" + fireLocations[l]][0].innerHTML = this.game[0].salvos[k].turn ;
+                        }
+
+                    }
+                }
+                 this.getHits();
+         },
+
+         init : async  function(){
+            this.updateGrid();
             this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
                                        methods: "GET",
                                    })
                                    .then(res => res.json())
                                    .then(data => data)
-                                   .catch(err => err)
+                                   .catch(err => err);
+            setInterval(function () { this.getState(); }.bind(this) ,10000);
 
-              if(this.game[0].ships.length >= 5 && this.state == "choosingShips"){
-                this.state = "choosingSalvo"
-              }
-
-              for( var i = 0 ; i <  this.game[0].ships.length ; i++){
-                    var locs = this.game[0].ships[i].shipLocations;
-                    for(var j = 0 ; j< locs.length ; j++){
-                        this.$refs["P" + locs[j]][0].style.backgroundColor = '#66bb6a';
-                    }
-              }
-              for(var k = 0 ; k < this.game[0].salvos.length ; k++){
-                var fireLocations = this.game[0].salvos[k].salvoLocations
-                for(var l = 0; l < fireLocations.length ; l++){
-                    if(this.game[0].salvos[k].playerId == this.currentPlayer.id){
-                        this.$refs["O" + fireLocations[l]][0].style.backgroundColor ='red';
-                        this.$refs["O" + fireLocations[l]][0].innerHTML = this.game[0].salvos[k].turn ;
-                    }else{
-                        this.$refs["P" + fireLocations[l]][0].style.backgroundColor ='red';
-                        this.$refs["P" + fireLocations[l]][0].innerHTML = this.game[0].salvos[k].turn ;
-                    }
-
-                }
-              }
-              this.getHits();
          },
+
          getShipTypeValue : function(event){
            this.shipTypeValue = event.target.value;
            if(this.shipTypeValue == 1){
@@ -86,6 +92,7 @@
                  this.shipLength = 2;
            }
          },
+
          cellSelected : function(startingPoint){
             this.startingPoint = startingPoint;
          },
@@ -149,7 +156,7 @@
             }
 
             if(result.result){
-                this.init();
+               this. updateGrid();;
             }else{
                 this.exceptionMessage = result.message;
             }
@@ -157,7 +164,10 @@
             this.startingPoint = "";
             this.shipDirection = "Select";
 
+            this.getState();
+
          },
+
          shotSelected : function(cell){
              for(var i = 0; i <  this.game[0].salvos.length; i++){
                 for(var j = 0; j < this.game[0].salvos[i].salvoLocations.length; j++){
@@ -178,6 +188,7 @@
              this.salvoLocations.push(cell);
 
          },
+
          firingSalvos : async function(){
 
               this.currentGamePlayerId = this.getURLParameter('gp');
@@ -194,12 +205,13 @@
                             .catch(err => err)
 
               if(result.result){
-                  this.init();
+                   this. updateGrid();
               }else{
                   this.exceptionMessage = result.message;
               }
               this.salvoLocations = [];
          },
+
          getHits : function(){
              this.hitsOnMe = [];
              for(var i = 0; i < this.game[0].playerGameResult.length; i++){
@@ -234,10 +246,25 @@
                  if (a.turn < b.turn) { return 1; }
                  if (a.turn > b.turn) { return -1; }
               });
-         }
+         },
 
-     },
-     computed: {
+         getState : async function(){
+            this.currentGamePlayerId = this.getURLParameter('gp');
+            var result = await fetch('http://localhost:8080/api/state/'+this.currentGamePlayerId,{
+                          methods: "GET",
+                        })
+                        .then(res => res.json())
+                        .then(data => data)
+                        .catch(err => err)
+            console.log(result);
+            if(result.status == 1){
+                this.state = "choosingShips";
+            }else if(result.state == 2){
+
+            }else if(result.state == 10){
+            }else if (result.state == 20){
+            }
+         }
 
      },
      created: function() {

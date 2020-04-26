@@ -145,33 +145,33 @@
                             .then(data => data)
                             .catch(err => err)
 
-                this.games =  await  fetch('http://localhost:8080/api/games',{
-                                        methods: "GET",
-                                    })
-                                    .then(res => res.json())
-                                    .then(data => data)
-                                    .catch(err => err)
+            this.games =  await  fetch('http://localhost:8080/api/games',{
+                                    methods: "GET",
+                                })
+                                .then(res => res.json())
+                                .then(data => data)
+                                .catch(err => err)
 
         },
 
         joinGame : async function(gameId){
             await  fetch('http://localhost:8080/api/game/'+gameId+'/players',{
-                                            method: "POST",
-                                            body:{},
-                                            headers: {
-                                                  'Content-Type': 'application/json'
-                                                },
-                                        })
-                                        .then(res => res.json())
-                                        .then(data => data)
-                                        .catch(err => err)
+                            method: "POST",
+                            body:{},
+                            headers: {
+                                  'Content-Type': 'application/json'
+                                },
+                        })
+                        .then(res => res.json())
+                        .then(data => data)
+                        .catch(err => err)
 
-               this.games =  await  fetch('http://localhost:8080/api/games',{
-                                                    methods: "GET",
-                                                })
-                                                .then(res => res.json())
-                                                .then(data => data)
-                                                .catch(err => err)
+            this.games =  await  fetch('http://localhost:8080/api/games',{
+                            methods: "GET",
+                        })
+                        .then(res => res.json())
+                        .then(data => data)
+                        .catch(err => err)
         },
     },
     created: function() {
