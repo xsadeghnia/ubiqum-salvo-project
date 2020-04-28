@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -38,46 +36,12 @@ public class SalvoController {
     @Autowired
     private SalvoRepository salvoRepository;
 
-//    @RequestMapping("/api/games/id")
-//    public List<Long> getGameById(){
-//       List<Game> games = gameRepository.findAll();
-//       List<Long> result = new ArrayList<>();
-//       for(Game game : games){
-//           result.add(game.getId());
-//       }
-//        return result;
-//    }
-//
-//    @RequestMapping("/api/games1")
-//    public Map<Long , Long> getGame1(){
-//        List<Game> games = gameRepository.findAll();
-//        Map<Long , Long> result = new HashMap<>();
-//        for(Game game : games){
-//            result.put(game.getId(), game.getCreationDate());
-//        }
-//        return result;
-//    }
-//
-//    @RequestMapping("/api/games2")
-//    public List<Map<String,Object>> getGame2(){
-//        List<Map<String, Object>> result = new ArrayList<>();
-//        List<Game> gamesInfo = gameRepository.findAll();
-//        for(Game game : gamesInfo){
-//            Map<String, Object> games = new HashMap<>();
-//            games.put("id" , game.getId());
-//            games.put("created", game.getCreationDate());
-//            result.add(games);
-//        }
-//
-//        return result;
-//    }
+    @Autowired
+    private  ScoreRepository scoreRepository;
 
     @GetMapping("/api/games")
     public List<Object> getGames(){
 
-        class ScoreModel{
-            public double score;
-        }
         class PlayerModel {
             public long id;
             public String email;
@@ -88,14 +52,12 @@ public class SalvoController {
         class GamePlayerModel {
             public long id;
             public PlayerModel player;
-//            public double score;
-
         }
         class GameModel{
             public  Long id;
             public  Long creationDate;
             public  List<GamePlayerModel> gamePlayers;
-
+            public  int state;
         }
 
         List<Object> result = new ArrayList<>();
@@ -105,11 +67,11 @@ public class SalvoController {
             GameModel gameModel = new GameModel();
             gameModel.id = game.getId();
             gameModel.creationDate = game.getCreationDate();
+            gameModel.state = game.getState();
             List<GamePlayerModel> gPlayers = new ArrayList<>();
             for (GamePlayer gamePlayer : game.getGamePlayers()){
                 GamePlayerModel gamePlayerModel = new GamePlayerModel();
                 gamePlayerModel.id = gamePlayer.getId();
-//                gamePlayerModel.score = gamePlayer.getScore();
                 gamePlayerModel.player = new PlayerModel();
                 gamePlayerModel.player.id = gamePlayer.getPlayer().getId();
                 gamePlayerModel.player.email = gamePlayer.getPlayer().getUserName();
@@ -347,6 +309,8 @@ public class SalvoController {
                 playerGameResultModels.add(gameResultModel);
             }
 
+            int myRemainedShips = currentNrOfShips;
+
             currentNrOfShips = 5;
             accumSalvos.clear();
             salvos = gamePlayer.get().getSalvos();
@@ -362,6 +326,48 @@ public class SalvoController {
                 }
                 gameResultModel.nrOfShipsLeft = currentNrOfShips;
                 opponentGameResultModels.add(gameResultModel);
+            }
+
+            int oppRemainedShips = currentNrOfShips;
+
+
+            if (myRemainedShips == 0 && oppRemainedShips == 0) {
+                gamePlayer.get().getGame().setState(Game.GameOver);
+                gameRepository.save(gamePlayer.get().getGame());
+                Score score = new Score();
+                score.setScore(0.5);
+                score.setGame(gamePlayer.get().getGame());
+                score.setPlayer(gamePlayer.get().getPlayer());
+                score.setFinishDate(new Date().getTime());
+                scoreRepository.save(score);
+
+                Score oppScore = new Score();
+                oppScore.setScore(0.5);
+                oppScore.setGame(gamePlayer.get().getGame());
+                oppScore.setPlayer(opponentGamePlayer.getPlayer());
+                oppScore.setFinishDate(new Date().getTime());
+                scoreRepository.save(oppScore);
+
+            } else if (myRemainedShips == 0 && oppRemainedShips > 0) {
+                gamePlayer.get().getGame().setState(Game.GameOver);
+                gameRepository.save(gamePlayer.get().getGame());
+                Score score = new Score();
+                score.setScore(1);
+                score.setGame(gamePlayer.get().getGame());
+                score.setPlayer(opponentGamePlayer.getPlayer());
+                score.setFinishDate(new Date().getTime());
+                scoreRepository.save(score);
+
+
+            } else if (myRemainedShips > 0 && oppRemainedShips == 0) {
+                gamePlayer.get().getGame().setState(Game.GameOver);
+                gameRepository.save(gamePlayer.get().getGame());
+                Score score = new Score();
+                score.setScore(1);
+                score.setGame(gamePlayer.get().getGame());
+                score.setPlayer(gamePlayer.get().getPlayer());
+                score.setFinishDate(new Date().getTime());
+                scoreRepository.save(score);
             }
         }
 
@@ -441,6 +447,8 @@ public class SalvoController {
     static class SignupModel{
         public String username;
         public  String password;
+        public String firstName;
+        public String lastName;
 
         public SignupModel() {
         }
@@ -462,6 +470,8 @@ public class SalvoController {
                 Player player = new Player();
                 player.setUserName(signupModel.username);
                 player.setPassword(signupModel.password);
+                player.setFirstName(signupModel.firstName);
+                player.setLastName(signupModel.lastName);
                 playerRepository.save(player);
                 signupResultModel.result = true;
                 signupResultModel.message = "successful";
@@ -548,6 +558,11 @@ public class SalvoController {
             Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
             // TODO: Check gamePlayer for null
 
+            if (gamePlayer.get().getGame().getState() != Game.EnterShips) {
+                return new PlacingShipsResultModel(false, "Waiting for a second player!",0 );
+
+            }
+
             ShipType shipType = shipTypeRepository.findByName(placingShipModel.shipType);
             Ship ship = new Ship();
             ship.setShipLocations(placingShipModel.shipLocations);
@@ -574,11 +589,12 @@ public class SalvoController {
             }
             shipRepository.save(ship);
 
-            // opponent 5 ta dare ya na?
-            if(gamePlayer.get().getGame().getGamePlayers().get(0).getShips().size() > 4 &&
-                    gamePlayer.get().getGame().getGamePlayers().get(1).getShips().size() > 4 ){
+            // Does opponent have 5 ship?
+            if((gamePlayer.get().getGame().getGamePlayers().get(0).getShips().size() +
+                    gamePlayer.get().getGame().getGamePlayers().get(1).getShips().size()) == 9){
                 gamePlayer.get().getGame().setState(Game.IndexZeroSalvo);
-
+                gameRepository.save(gamePlayer.get().getGame());
+                System.out.println(">>>>>>>>>>>indexZeroSalvo" + Game.IndexZeroSalvo);
             }
 
             return new PlacingShipsResultModel(true, "successful to placing ships!",gamePlayer.get().getShips().size());
@@ -622,6 +638,14 @@ public class SalvoController {
                 return new  SalvoResultModel(false,"You can only select 5 shots.",salvo.getSalvoLocations().size());
             }
             salvoRepository.save(salvo);
+
+            if (gamePlayer.get().getGame().getState() == Game.IndexZeroSalvo){
+                gamePlayer.get().getGame().setState(Game.IndexOneSalvo);
+            }else if(gamePlayer.get().getGame().getState() == Game.IndexOneSalvo){
+                gamePlayer.get().getGame().setState(Game.IndexZeroSalvo);
+            }
+            gameRepository.save(gamePlayer.get().getGame());
+
             return new  SalvoResultModel(true,"Successful", salvo.getSalvoLocations().size());
         }
         catch (Exception e){

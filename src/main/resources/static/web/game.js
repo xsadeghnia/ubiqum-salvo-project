@@ -23,7 +23,7 @@
      state : "choosingShips",
      salvoLocations : [],
      hitsOnMe : [],
-     hitsOnOpp: []
+     hitsOnOpp: [],
   },
      methods:{
          updateGrid : async function(){
@@ -34,9 +34,6 @@
                         .then(data => data)
                         .catch(err => err)
 
-                 if(this.game[0].ships.length >= 5 && this.state == "choosingShips"){
-                                this.state = "choosingSalvo"
-                              }
 
                 for( var i = 0 ; i <  this.game[0].ships.length ; i++){
                         var locs = this.game[0].ships[i].shipLocations;
@@ -68,6 +65,7 @@
                                    .then(res => res.json())
                                    .then(data => data)
                                    .catch(err => err);
+            this.getState();
             setInterval(function () { this.getState(); }.bind(this) ,10000);
 
          },
@@ -114,7 +112,11 @@
             if(this.shipDirection == "Horizontal"){
                 var start = this.startingPoint[1];
                 for(var i = this.startingPoint[1] ;i < this.shipLength + Number(start) ; i++){
-                    this.shipLocations.push(this.startingPoint[0]+i);
+                    if(Number(start)  + this.shipLength <= this.rows.length){
+                        this.shipLocations.push(this.startingPoint[0]+i);
+                    }else{
+                            this.exceptionMessage = "There ia a ships extending beyond the borders of the grid, Please select another place!";
+                    }
                 }
             }else if(this.shipDirection == "Vertical"){
                 for(var j = 0 ; j < this.columns.length ; j++){
@@ -122,11 +124,14 @@
                         var start = j;
                     }
                     if(j < this.shipLength + start){
-                        if(this.startingPoint.length < 3){
-                            this.shipLocations.push(this.columns[j]+this.startingPoint[1]);
-                        }else{
-                            this.shipLocations.push(this.columns[j]+this.startingPoint[1]+this.startingPoint[2]);
-
+                        if(this.shipLength + start <= this.columns.length){
+                            if(this.startingPoint.length < 3){
+                                this.shipLocations.push(this.columns[j]+this.startingPoint[1]);
+                            }else{
+                                this.shipLocations.push(this.columns[j]+this.startingPoint[1]+this.startingPoint[2]);
+                                 }
+                        }else {
+                            this.exceptionMessage = "There ia a ships extending beyond the borders of the grid, Please select another place!"
                         }
                     }
 
@@ -151,9 +156,6 @@
                             .catch(err => err)
 
             console.log(result.shipCounter);
-            if(result.shipCounter >= 4 ){
-                this.state = "choosingSalvo";
-            }
 
             if(result.result){
                this. updateGrid();;
@@ -210,6 +212,7 @@
                   this.exceptionMessage = result.message;
               }
               this.salvoLocations = [];
+              this.getState();
          },
 
          getHits : function(){
@@ -260,9 +263,11 @@
             if(result.status == 1){
                 this.state = "choosingShips";
             }else if(result.state == 2){
-
+                this.state = "gameOver";
             }else if(result.state == 10){
+                this.state = "choosingSalvo";
             }else if (result.state == 20){
+                this.state = "waiting";
             }
          }
 

@@ -43,12 +43,14 @@
                  <th v-if="state == 'loginedState'">state</th>
              </tr>
              <tr v-for="game in games">
-                 <td v-if="isCurrentUser(game.gamePlayers)== true"><a :href=" getGamePlayerLink(game.gamePlayers)">{{convertTimestamp(game.creationDate)}}</a></td>
+                 <td v-if="isCurrentUser(game.gamePlayers)== true && game.state != 2"><a :href=" getGamePlayerLink(game.gamePlayers)">{{convertTimestamp(game.creationDate)}}</a></td>
                  <td v-else>{{convertTimestamp(game.creationDate)}}</td>
                  <td v-for="gamePlayer in game.gamePlayers" >{{gamePlayer.player.firstName}} {{gamePlayer.player.lastName}}</td>
                  <td v-if="game.gamePlayers.length == 1"></td>
-                 <td v-if="game.gamePlayers.length == 0 || game.gamePlayers.length == 1  && state == 'loginedState'"> <button v-on:click="joinGame(game.id)">Join Game</button></td>
-                 <td v-if=" game.gamePlayers.length == 2 && state == 'loginedState'">Full</td>
+                 <td v-if="game.gamePlayers.length == 0 || game.gamePlayers.length == 1  && state == 'loginedState'  && game.state != 2 && !isCurrentUser(game.gamePlayers)"> <button v-on:click="joinGame(game.id)">Join Game</button></td>
+                 <td v-if=" game.gamePlayers.length == 2 && state == 'loginedState' && game.state != 2">Full</td>
+                 <td v-if="isCurrentUser(game.gamePlayers) && game.gamePlayers.length != 2 && game.state != 2">Waiting...</td>
+                 <td v-if="game.state == 2 && state == 'loginedState'">Finished</td>
              </tr>
          </table>
      </div>
@@ -79,7 +81,12 @@
      <div class="sign-up-form-holder" v-if="state == 'signupstate'">
          <div class="sign-up-form">
              <div class="single-row" >
-
+                 <label>FirstName:</label>
+                 <input type="text" v-model="firstName">
+             </div>
+             <div class="single-row" >
+                 <label>LastName:</label>
+                 <input type="text" v-model="lastName">
              </div>
              <div class="single-row" >
                  <label>Username:</label>

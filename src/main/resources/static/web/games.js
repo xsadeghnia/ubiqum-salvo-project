@@ -8,6 +8,8 @@
         signUpResult : {},
         username : "jack@gmail.com",
         password : "jack123",
+        firstName : "",
+        lastName : "",
         currentPlayer : {},
         loginErrorMessage : "",
         currentGamePlayerId : "",
@@ -41,7 +43,7 @@
                }
         },
         convertTimestamp:function(t) {
-            var date = new Date(t * 1000);
+            var date = new Date(t *1000);
             var formattedDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear() + ' ' + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);
             return formattedDate
         },
@@ -93,7 +95,7 @@
         },
         signUp : async function(){
 //            this.state = "loginState";
-            var signUpObject = {"username": this.username , "password" : this.password};
+            var signUpObject = {"username": this.username , "password" : this.password , "firstName" : this.firstName, "lastName": this.lastName};
             this.signUpResult = await  fetch('http://localhost:8080/api/signup',{
                                     method: "POST",
                                     body: JSON.stringify(signUpObject),
