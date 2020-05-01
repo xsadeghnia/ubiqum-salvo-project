@@ -1,111 +1,106 @@
-<!DOCTYPE>
-<html>
+<!DOCTYPE >
+<html lang="en">
 <head>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link rel="stylesheet" href="styles.css">
     <title>Salvo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
-<body>
- <div id="myVue" class="whole-page">
-    <div class="log-in-row" v-if="state == 'mainState'">
-       <p class="login-link"  v-on:click="state = 'loginState'">Log in</p>
-       <p class="signup-link" v-on:click="state = 'signupstate'">Sign Up</p>
+<body class="gamesBody">
+    <div id="myVue" class="whole-page">
+        <div class="nav-bar">
+            <div class="nav-title-holder">
+                <div class="nav-title">Battleship</div>
+                <div class="welcom-player" v-if="state == 'loginedState'">{{"Hi"+" "+ currentPlayer.firstName }}</div>
+            </div>
+            <div class="nav-cell-holder">
+                <div class="nav-cell" v-on:click="status='homeStatus'">Home</div>
+                <div class="nav-cell" v-on:click="status='gamesStatus'">Games</div>
+                <div class="nav-cell" v-on:click="status='leaderboardStatus'">Leaderboard</div>
+                <div class="nav-cell" v-on:click="status='loginStatus'" v-if="state == 'mainState'">Log In</div>
+                <div class="nav-cell" v-on:click="state='mainState'"  v-if = "state == 'loginedState'">Log Out</div>
+            </div>
+        </div>
+        <div class="main-box" v-if="status =='loginStatus'">
+            <div class="title">Log In</div>
+            <div class="Log-in-form">
+                <div class="single-row" >
+                    <label>Username:</label>
+                    <input type="text" v-model="username">
+                </div>
+                <div  class="single-row">
+                    <label>Password:</label>
+                    <input type=" text" v-model="password">
+                </div>
+                <div  class="single-row">
+                    <button v-on:click="logIn"> Log in</button>
+                </div>
+                <div  class="single-row">
+                    <p class="signup-link" v-on:click="state ='signupstate'">Sign Up</p>
+                </div>
+                <div class="single-row"> {{loginErrorMessage}}</div>
+            </div>
+        </div>
+        <div class="main-box" v-if = "status == 'homeStatus'">
+            <div class="title" >Welcome to the battle!</div>
+            <div class="details">
+             Deploy your fleet and shoot at your opponent's grid to find and destroy enemy ships befor yours are sunk.
+            </div>
+            <div class="tip">You need to be logged in to play online.</div>
+            <div class="login-icon-holder"><img src="/images/login02.png"></div>
+            <div class="login-note" >Log In</div>
+        </div>
+        <div class="main-box" v-if = "status == 'leaderboardStatus'">
+            <div class="title" >Leaderboard</div>
+            <table class="score-tbl  table-hover">
+                <tr>
+                    <th>Name</th>
+                    <th>Total</th>
+                    <th>Won</th>
+                    <th>Lost</th>
+                    <th>Tied</th>
+                </tr>
+                <tr v-for="score in scores">
+                    <td>{{score.firstName}} {{score.lastName}}</td>
+                    <td>{{score.totalScore}}</td>
+                    <td>{{score.totalWin}}</td>
+                    <td>{{score.totalLoss}}</td>
+                    <td>{{score.totalTie}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="main-box" v-if="status == 'gamesStatus'">
+            <div class="title" >Games</div>
+                <table class="games-tbl">
+                    <tr>
+                         <th>Game</th>
+                         <th>Player1</th>
+                         <th>Player2</th>
+                         <th v-if="state == 'loginedState'">state</th>
+                    </tr>
+                     <tr v-for="game in games">
+                         <td v-if="isCurrentUser(game.gamePlayers)== true && game.state != 2"><a :href=" getGamePlayerLink(game.gamePlayers)">{{convertTimestamp(game.creationDate)}}</a></td>
+                         <td v-else>{{convertTimestamp(game.creationDate)}}</td>
+                         <td v-for="gamePlayer in game.gamePlayers" >{{gamePlayer.player.firstName}} {{gamePlayer.player.lastName}}</td>
+                         <td v-if="game.gamePlayers.length == 1"></td>
+                         <td v-if="game.gamePlayers.length == 0 || game.gamePlayers.length == 1  && state == 'loginedState'  && game.state != 2 && !isCurrentUser(game.gamePlayers)"> <button v-on:click="joinGame(game.id)">Join Game</button></td>
+                         <td v-if=" game.gamePlayers.length == 2 && state == 'loginedState' && game.state != 2">Full</td>
+                         <td v-if="isCurrentUser(game.gamePlayers) && game.gamePlayers.length != 2 && game.state != 2">Waiting...</td>
+                         <td v-if="game.state == 2 && state == 'loginedState'">Finished</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="create-btn-holder" v-if="state == 'loginedState' && status == 'gamesStatus'" v-on:click="createGame">
+                <button>Create Game</button>
+            </div>
+        </div>
     </div>
-     <div class="log-in-row" v-if="state == 'loginedState'">
-         <span>{{currentPlayer.firstName}} {{currentPlayer.lastName}}</span>
-         <button  v-on:click="logOut ">Log out</button>
-     </div>
-     <div class="info-row" v-if="state == 'mainState' || state == 'loginedState'">
-     <table class="score-tbl">
-         <tr>
-             <th>Name</th>
-             <th>Total</th>
-             <th>Won</th>
-             <th>Lost</th>
-             <th>Tied</th>
-         </tr>
-         <tr v-for="score in scores">
-             <td>{{score.firstName}} {{score.lastName}}</td>
-             <td>{{score.totalScore}}</td>
-             <td>{{score.totalWin}}</td>
-             <td>{{score.totalLoss}}</td>
-             <td>{{score.totalTie}}</td>
-         </tr>
-     </table>
-     </div>
-     <div class="info-row" v-if="state == 'mainState' || state == 'loginedState'">
-         <table class="games-tbl">
-             <tr>
-                 <th>Game</th>
-                 <th>Player1</th>
-                 <th>Player2</th>
-                 <th v-if="state == 'loginedState'">state</th>
-             </tr>
-             <tr v-for="game in games">
-                 <td v-if="isCurrentUser(game.gamePlayers)== true && game.state != 2"><a :href=" getGamePlayerLink(game.gamePlayers)">{{convertTimestamp(game.creationDate)}}</a></td>
-                 <td v-else>{{convertTimestamp(game.creationDate)}}</td>
-                 <td v-for="gamePlayer in game.gamePlayers" >{{gamePlayer.player.firstName}} {{gamePlayer.player.lastName}}</td>
-                 <td v-if="game.gamePlayers.length == 1"></td>
-                 <td v-if="game.gamePlayers.length == 0 || game.gamePlayers.length == 1  && state == 'loginedState'  && game.state != 2 && !isCurrentUser(game.gamePlayers)"> <button v-on:click="joinGame(game.id)">Join Game</button></td>
-                 <td v-if=" game.gamePlayers.length == 2 && state == 'loginedState' && game.state != 2">Full</td>
-                 <td v-if="isCurrentUser(game.gamePlayers) && game.gamePlayers.length != 2 && game.state != 2">Waiting...</td>
-                 <td v-if="game.state == 2 && state == 'loginedState'">Finished</td>
-             </tr>
-         </table>
-     </div>
-     <div class="create-btn-holder" v-if="state == 'loginedState'" v-on:click="createGame">
-        <button>Create Game</button>
-     </div>
-
-     <div class="Log-in-form-holder" v-if="state == 'loginState'">
-         <div class="Log-in-form">
-             <div class="single-row" >
-                 <label>Username:</label>
-                 <input type=" text" v-model="username">
-             </div>
-             <div  class="single-row">
-                 <label>Password:</label>
-                 <input type=" text" v-model="password">
-             </div>
-             <div  class="single-row">
-                <button v-on:click="logIn"> Log in</button>
-             </div>
-             <div  class="single-row">
-                 <p class="signup-link" v-on:click="state = 'signupstate'">Sign Up</p>
-             </div>
-             <div class="single-row"> {{loginErrorMessage}}</div>
-         </div>
-
-     </div>
-     <div class="sign-up-form-holder" v-if="state == 'signupstate'">
-         <div class="sign-up-form">
-             <div class="single-row" >
-                 <label>FirstName:</label>
-                 <input type="text" v-model="firstName">
-             </div>
-             <div class="single-row" >
-                 <label>LastName:</label>
-                 <input type="text" v-model="lastName">
-             </div>
-             <div class="single-row" >
-                 <label>Username:</label>
-                 <input type=" text" v-model="username">
-             </div>
-             <div  class="single-row">
-                 <label>Password:</label>
-                 <input type=" text" v-model="password">
-             </div>
-             <div  class="single-row">
-                 <button v-on:click="signUp">Sign Up</button>
-             </div>
-
-             <div class="single-row"> {{loginErrorMessage}}</div>
-         </div>
-
-     </div>
- </div>
-<script src="games.js"></script>
+    <script src="games.js"></script>
 </body>
 
 </html>

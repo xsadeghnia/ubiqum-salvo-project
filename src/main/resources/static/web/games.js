@@ -14,6 +14,7 @@
         loginErrorMessage : "",
         currentGamePlayerId : "",
         gameCreated : {},
+        status : "homeStatus",
     },
     methods:{
         init : async function(){
@@ -74,6 +75,7 @@
 
                         if(!this.currentPlayer.noPrincipal)  {
                            this.state = "loginedState" ;
+                           this.status = "gamesStatus";
                         }
         },
         logOut : async function(){

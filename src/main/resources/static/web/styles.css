@@ -1,4 +1,135 @@
-
+.gamesBody{
+    max-width: 100%;
+    margin: auto;
+    font-family: sans-serif;
+    background-image: url(/images/ship01.jpg);
+    background-repeat:no-repeat;
+    -webkit-background-size:cover;
+    -moz-background-size:cover;
+    -o-background-size:cover;
+    background-size:cover;
+    background-position:center;
+    display: flex;
+}
+.whole-page{
+    display :flex;
+    width: 100%;
+    margin:0px;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+.main-box{
+    display :flex;
+    width :47%;
+    flex-wrap: wrap;
+    border-radius: 2%;
+    background: #223c4ec2;
+    margin-left: 9%;
+}
+.nav-bar{
+    display: flex;
+    width: 100%;
+    background-color:#223c4ec2; 
+    height: 53px;
+    color: orange;
+    font-family: fantasy;
+    margin-bottom: 7%;
+}
+.nav-title-holder{
+    display: flex;
+    width: 40%;
+    margin-top: 1%;
+    margin-left: 2%;
+}
+.nav-title{
+    display: flex;
+    width: 60%;
+    font-size: x-large;
+    font-weight: bold;
+}
+.welcom-player{
+    display: flex;
+    width: 40%;
+}
+.nav-cell-holder{
+    display: flex;
+    width: 60%;
+    justify-content: flex-end;
+    margin-top: 1.5%;
+}
+.nav-cell{
+    display: flex;
+    width: 25%;
+    font-size: medium;
+    font-weight: bold;
+    justify-content: flex-end;
+    padding-right: 7%;
+    cursor: pointer;
+}
+.nav-cell:hover{
+    color: #fef59f;
+}
+.title{
+   display : flex;
+    width: 100%;
+    justify-content: center;
+    color: orange;
+    font-size: x-large;
+    font-family: fantasy;
+    padding-top: 5%; 
+}
+.details{
+    display : flex;
+    width: 100%;
+    margin-left: 14%;
+    margin-right: 14%;
+    margin-top: 10%;
+    color: orange;
+    text-align: justify;
+}
+.tip{
+    display : flex;
+    width: 100%;
+    justify-content: center;
+    color: orange;
+    font-size: medium;
+    margin-top: 10%;
+}
+.login-icon-holder{
+    display : flex;
+    width: 100%;
+    justify-content: center;
+    margin-top: 3%;
+    cursor: pointer;
+}
+.login-icon-holder img{
+    width: 11%;
+}
+.login-icon-holder img:hover{
+    animation: shake 0.5s;
+    animation-iteration-count: infinite;
+}
+@keyframes shake {
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+.login-note{
+    display : flex;
+    width: 100%;
+    justify-content: center;
+    margin-top: 1%;
+    color: orange;
+    margin-bottom: 10%;
+    cursor: pointer;
+}
+.login-note:hover{
+    color: #fef59f;
+}
 .container{
   display: flex;
   flex-flow: wrap;
@@ -8,7 +139,6 @@
      width:100%;
      justify-content: center;
      margin-bottom: 7%;
-
 }
 .row{
     display: flex;
@@ -47,41 +177,30 @@
     margin:5%;
 }
 .score-tbl{
-   border-collapse: collapse;
-     font-family: Arial, Helvetica, sans-serif;
-     width : 45%;
+     width : 65%;
      margin-bottom: 7%;
+     margin-top: 2%;
+     color: orange;
 }
 .score-tbl td, th{
-    border : 1px solid gray;
     padding : 1%;
 }
 .games-tbl{
  border-collapse: collapse;
      font-family: Arial, Helvetica, sans-serif;
      font-size: 1.5vw;
-     width : 50%;
+     width : 65%;
 }
 .games-tbl td, th{
     border : 1px solid gray;
     padding : 1%;
+    margin-bottom: 10%
 }
-.whole-page{
-    display :flex;
-    width :100%;
-    flex-wrap: wrap;
-}
-.log-in-row{
-    display : flex;
-    width: 100%;
-}
-.log-in-row button{
-     width: 15%;
-     margin: 5%;
-}
+
 .info-row{
     display:flex;
     width:100%;
+    justify-content: center;
 }
 .create-btn-holder{
      display:flex;
@@ -96,7 +215,7 @@
 .log-in-form{
     border : 1px solid lightgray;
     border-radius: 3%;
-        width: 50%;
+    width: 50%;
 }
 .single-row{
     display:flex;
@@ -104,19 +223,7 @@
     margin-bottom :2%;
     justify-content: center;
 }
-.login-link{
-    cursor: pointer;
-    margin-left : 3%;
-    hover: color: blue;
-}
-.signup-link{
-    cursor: pointer;
-     margin-left : 3%;
-}
 
-.login-link:hover , .signup-link:hover{
-  color: blue;
-}
 .warning{
     color:red;
 }

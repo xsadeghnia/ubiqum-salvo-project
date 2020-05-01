@@ -131,7 +131,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/web/*.css",
                         "/api/principal",
                         "/api/signup",
-                        "/api/logout"
+                        "/api/logout",
+                        "/images/**"
                 )
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/api/login")
