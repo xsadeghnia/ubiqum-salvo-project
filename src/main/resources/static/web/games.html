@@ -5,10 +5,6 @@
     <link rel="stylesheet" href="styles.css">
     <title>Salvo</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
 <body class="gamesBody">
@@ -77,20 +73,20 @@
         <div class="main-box" v-if = "status == 'leaderboardStatus'">
             <div class="title" >Leaderboard</div>
             <table class="score-tbl">
-                <tr>
-                    <th>Name</th>
-                    <th>Total</th>
-                    <th>Won</th>
-                    <th>Lost</th>
-                    <th>Tied</th>
-                </tr>
-                <tr v-for="score in scores">
-                    <td>{{score.firstName}} {{score.lastName}}</td>
-                    <td>{{score.totalScore}}</td>
-                    <td>{{score.totalWin}}</td>
-                    <td>{{score.totalLoss}}</td>
-                    <td>{{score.totalTie}}</td>
-                </tr>
+                    <tr>
+                        <th>Name</th>
+                        <th>Total</th>
+                        <th>Won</th>
+                        <th>Lost</th>
+                        <th>Tied</th>
+                    </tr>
+                    <tr v-for="score in scores">
+                        <td>{{score.firstName}} {{score.lastName}}</td>
+                        <td>{{score.totalScore}}</td>
+                        <td>{{score.totalWin}}</td>
+                        <td>{{score.totalLoss}}</td>
+                        <td>{{score.totalTie}}</td>
+                    </tr>
             </table>
         </div>
         <div class="main-box" v-if="status == 'gamesStatus'">
@@ -98,23 +94,25 @@
                 <table class="games-tbl">
                     <tr>
                          <th>Game</th>
-                         <th>Player1</th>
-                         <th>Player2</th>
-                         <th v-if="state == 'loginedState'">state</th>
+                         <th>Player 1</th>
+                         <th>Player 2</th>
+                         <th v-if="state == 'loginedState'">State</th>
                     </tr>
                      <tr v-for="game in games">
                          <td v-if="isCurrentUser(game.gamePlayers)== true && game.state != 2"><a :href=" getGamePlayerLink(game.gamePlayers)">{{convertTimestamp(game.creationDate)}}</a></td>
                          <td v-else>{{convertTimestamp(game.creationDate)}}</td>
                          <td v-for="gamePlayer in game.gamePlayers" >{{gamePlayer.player.firstName}} {{gamePlayer.player.lastName}}</td>
                          <td v-if="game.gamePlayers.length == 1"></td>
-                         <td v-if="game.gamePlayers.length == 0 || game.gamePlayers.length == 1  && state == 'loginedState'  && game.state != 2 && !isCurrentUser(game.gamePlayers)"> <button v-on:click="joinGame(game.id)">Join Game</button></td>
+                         <td v-if="game.gamePlayers.length == 0 || game.gamePlayers.length == 1  && state == 'loginedState'  && game.state != 2 && !isCurrentUser(game.gamePlayers)">
+                          <button class="join-btn" v-on:click="joinGame(game.id)">Join Game</button>
+                        </td>
                          <td v-if=" game.gamePlayers.length == 2 && state == 'loginedState' && game.state != 2">Full</td>
                          <td v-if="isCurrentUser(game.gamePlayers) && game.gamePlayers.length != 2 && game.state != 2">Waiting...</td>
                          <td v-if="game.state == 2 && state == 'loginedState'">Finished</td>
                     </tr>
                 </table>
                 <div class="create-btn-holder" v-if="state == 'loginedState' && status == 'gamesStatus'" v-on:click="createGame">
-                <button>Create Game</button>
+                <button class="create-btn">Create Game</button>
             </div>
             </div>
             
