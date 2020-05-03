@@ -20,11 +20,12 @@
 }
 .main-box{
     display :flex;
-    width :47%;
+    width :50%;
     flex-wrap: wrap;
     border-radius: 2%;
     background: #223c4ec2;
     margin-left: 9%;
+    justify-content: center;
 }
 .nav-bar{
     display: flex;
@@ -77,6 +78,7 @@
     font-size: x-large;
     font-family: fantasy;
     padding-top: 5%; 
+    margin-bottom: 10%;
 }
 .details{
     display : flex;
@@ -187,16 +189,21 @@
 }
 .games-tbl{
  border-collapse: collapse;
-     font-family: Arial, Helvetica, sans-serif;
-     font-size: 1.5vw;
-     width : 65%;
+     font-size: 1.2vw;
+     width : 87%;
+     color: orange;
 }
 .games-tbl td, th{
     border : 1px solid gray;
     padding : 1%;
     margin-bottom: 10%
 }
-
+.games-tbl a:hover {
+  color: orange;
+}
+.games-tbl a {
+  color: #fef59f;
+}
 .info-row{
     display:flex;
     width:100%;
@@ -213,9 +220,7 @@
     justify-content: center;
 }
 .log-in-form{
-    border : 1px solid lightgray;
-    border-radius: 3%;
-    width: 50%;
+    width: 75%;
 }
 .single-row{
     display:flex;
@@ -223,9 +228,40 @@
     margin-bottom :2%;
     justify-content: center;
 }
-
+.single-row input{
+    border: none;
+    border-bottom: 1px solid orange;
+    box-sizing: border-box;
+    background: border-box;
+    color: orange;
+    width: 70%;
+    font-size: large;
+    margin-bottom: 10%
+}
+::placeholder {
+  color: #f79b3d82;
+  opacity: 1; /* Firefox */
+}
+.login-btn{
+    border :none;
+    background-color: orange;
+    color: #223c4ec2;
+    width: 70%;
+    font-size: medium;
+    margin-bottom: 5%;
+}
+.signup-link{
+    color: orange;
+    font-size: medium;
+    text-decoration: underline;
+    margin-bottom: 20%;
+}
+.signup-link:hover{
+    color: #fef59f;
+}
 .warning{
-    color:red;
+    color:orange;
+    margin-bottom: 5%
 }
 .salvo-holder{
     display: flex;

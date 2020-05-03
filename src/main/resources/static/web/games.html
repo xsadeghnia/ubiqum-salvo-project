@@ -30,34 +30,53 @@
             <div class="title">Log In</div>
             <div class="Log-in-form">
                 <div class="single-row" >
-                    <label>Username:</label>
-                    <input type="text" v-model="username">
+                    <input type="text" v-model="username" placeholder="Username">
                 </div>
                 <div  class="single-row">
-                    <label>Password:</label>
-                    <input type=" text" v-model="password">
+                    <input type=" text" v-model="password" placeholder="Password">
+                </div>
+                <div class="single-row warning"> {{loginErrorMessage}}</div>
+                <div  class="single-row">
+                    <button v-on:click="logIn" class="login-btn"> Log in</button>
                 </div>
                 <div  class="single-row">
-                    <button v-on:click="logIn"> Log in</button>
+                    <p class="signup-link" v-on:click="status ='signupStatus'">Create an account</p>
                 </div>
-                <div  class="single-row">
-                    <p class="signup-link" v-on:click="state ='signupstate'">Sign Up</p>
-                </div>
-                <div class="single-row"> {{loginErrorMessage}}</div>
             </div>
         </div>
+         <div class="main-box" v-if="status =='signupStatus'">
+         <div class="Log-in-form">
+            <div class="title">Sign Up</div>
+             <div class="single-row" >
+                 <input type="text" v-model="firstName" placeholder="FirstName">
+             </div>
+             <div class="single-row" >
+                 <input type="text" v-model="lastName" placeholder="LastName">
+             </div>
+             <div class="single-row" >
+                 <input type=" text" v-model="username" placeholder="Username">
+             </div>
+             <div  class="single-row">
+                 <input type=" text" v-model="password" placeholder="Password">
+             </div>
+            <div class="single-row warning"> {{loginErrorMessage}}</div>
+             <div  class="single-row">
+                 <button class="login-btn" @click="signUp">Sign Up</button>
+             </div>
+        </div>     
+    </div>
         <div class="main-box" v-if = "status == 'homeStatus'">
             <div class="title" >Welcome to the battle!</div>
             <div class="details">
              Deploy your fleet and shoot at your opponent's grid to find and destroy enemy ships befor yours are sunk.
             </div>
-            <div class="tip">You need to be logged in to play online.</div>
-            <div class="login-icon-holder"><img src="/images/login02.png"></div>
-            <div class="login-note" >Log In</div>
+            <div class="tip">You need to log in to play online.</div>
+            <div class="login-icon-holder" @click="status='loginStatus'"><img src="/images/login02.png"></div>
+            <div class="login-note" @click="status = 'loginStatus'">Log In</div>
         </div>
         <div class="main-box" v-if = "status == 'leaderboardStatus'">
             <div class="title" >Leaderboard</div>
-            <table class="score-tbl  table-hover">
+            <table class="score-tbl">
                 <tr>
                     <th>Name</th>
                     <th>Total</th>
@@ -94,10 +113,11 @@
                          <td v-if="game.state == 2 && state == 'loginedState'">Finished</td>
                     </tr>
                 </table>
-            </div>
-            <div class="create-btn-holder" v-if="state == 'loginedState' && status == 'gamesStatus'" v-on:click="createGame">
+                <div class="create-btn-holder" v-if="state == 'loginedState' && status == 'gamesStatus'" v-on:click="createGame">
                 <button>Create Game</button>
             </div>
+            </div>
+            
         </div>
     </div>
     <script src="games.js"></script>

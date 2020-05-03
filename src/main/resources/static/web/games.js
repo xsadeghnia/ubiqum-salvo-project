@@ -6,8 +6,8 @@
         state : "mainState",
         loginResult :{},
         signUpResult : {},
-        username : "jack@gmail.com",
-        password : "jack123",
+        username : "",
+        password : "",
         firstName : "",
         lastName : "",
         currentPlayer : {},
@@ -111,6 +111,9 @@
            console.log(JSON.stringify(this.signUpResult));
            if(this.signUpResult.result == true){
                  this.state = "loginState";
+                 this.status = "loginStatus";
+           }else{
+            this.loginErrorMessage = this.signUpResult.message;
            }
         },
 
