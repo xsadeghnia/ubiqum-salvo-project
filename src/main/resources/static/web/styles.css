@@ -241,7 +241,7 @@
     color: #223c4ec2;
 }
 .score-tbl{
-    width : 65%;
+    width : 77%;
     margin-bottom: 7%;
     color: orange;
 }
@@ -254,10 +254,10 @@
     text-align: center;
 }
 .score-tbl td{
-    font-size: 1.1vw;
+    font-size: 1.3vw;
 }
 .games-tbl{
-     width : 79%;
+     width : 88%;
      margin-bottom: 10%;
 }
 .games-tbl td{
@@ -271,6 +271,7 @@
     border-bottom: 1px solid gray;
     color: orange;
     text-align: center;
+    font-size: 1.2vw;
 }
 .games-tbl a {
   color: #f5821f;
@@ -287,6 +288,7 @@
     font-size: 1.1vw;
     padding-top: 3px;
     padding-bottom: 3px;
+    cursor: pointer;
 }
 .create-btn{
     background-color: orange;
@@ -296,6 +298,7 @@
     font-size: 1.1vw;
     padding-top: 4px;
     padding-bottom: 4px;
+    cursor: pointer;
 }
 .scroll-tbl{
     width: 100%;
@@ -362,6 +365,7 @@
 }
 .signup-link:hover{
     color: #fef59f;
+    cursor: pointer;
 }
 .warning{
     color:red;

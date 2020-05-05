@@ -12,23 +12,30 @@
         lastName : "",
         currentPlayer : {},
         loginErrorMessage : "",
+        signUpErrorMessage : "",
         currentGamePlayerId : "",
         gameCreated : {},
         status : "homeStatus",
     },
     methods:{
         getGames:async function(){
-           this.games =  await  fetch('http://localhost:8080/api/games',{
+           this.games =  await  fetch('/api/games',{
                             methods: "GET",
                         })
                         .then(res => res.json())
                         .then(data => data)
                         .catch(err => err)
-                      },
+
+            this.games.sort(function(a, b) {
+                if (a.creationDate == b.creationDate) { return 0; }
+                if (a.creationDate < b.creationDate) { return 1; }
+                if (a.creationDate > b.creationDate) { return -1; }
+            });
+        },
         init : async function(){
           
             this.getGames();
-           var arr=  await  fetch('http://localhost:8080/api/leaderboard',{
+           var arr=  await  fetch('/api/leaderboard',{
                              methods: "GET",
                          })
                          .then(res => res.json())
@@ -36,7 +43,7 @@
                          .catch(err => err)
             this.scores = arr.sort((a, b) => (a.totalScore < b.totalScore) ? 1 : -1);             
 
-             this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
+             this.currentPlayer =  await  fetch('/api/principal',{
                                                               methods: "GET",
                                                           })
                                                           .then(res => res.json())
@@ -47,14 +54,12 @@
                   this.state = "loginedState" ;
                }
         },
-        convertTimestamp:function(t) {
-            var date = new Date(t *1000);
-            var formattedDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + ' ' + ' ' + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);
-            return formattedDate
+        convertTimestamp: function(t) {
+            return new Date(t).toLocaleString("en-US");
         },
         logIn: async function(){
            var loginObject = {"username": this.username , "password" : this.password};
-           this.loginResult = await  fetch('http://localhost:8080/api/login',{
+           this.loginResult = await  fetch('/api/login',{
                                     method: "POST",
                                     body: JSON.stringify(loginObject),
                                     headers: {
@@ -70,7 +75,7 @@
            }else{
             this.loginErrorMessage = this.loginResult.message;
            }
-             this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
+             this.currentPlayer =  await  fetch('/api/principal',{
                                                    methods: "GET",
                                                })
                                                .then(res => res.json())
@@ -86,7 +91,7 @@
 
         },
         logOut : async function(){
-            await  fetch('http://localhost:8080/api/logout',{
+            await  fetch('/api/logout',{
                                         methods: "GET",
                                     })
                                     .then(res => res.json())
@@ -94,7 +99,7 @@
                                     .catch(err => err)
 
 
-            this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
+            this.currentPlayer =  await  fetch('/api/principal',{
                                        methods: "GET",
                                    })
                                    .then(res => res.json())
@@ -105,7 +110,7 @@
         },
         signUp : async function(){
             var signUpObject = {"username": this.username , "password" : this.password , "firstName" : this.firstName, "lastName": this.lastName};
-            this.signUpResult = await  fetch('http://localhost:8080/api/signup',{
+            this.signUpResult = await  fetch('/api/signup',{
                                     method: "POST",
                                     body: JSON.stringify(signUpObject),
                                     headers: {
@@ -120,7 +125,7 @@
                  this.state = "loginState";
                  this.status = "loginStatus";
            }else{
-            this.loginErrorMessage = this.signUpResult.message;
+            this.signUpErrorMessage = this.signUpResult.message;
            }
         },
 
@@ -141,14 +146,14 @@
         getGamePlayerLink : function(gamePlayers){
             for(var i = 0 ; i < gamePlayers.length ; i++){
                 if(gamePlayers[i].player.email == this.currentPlayer.username) {
-                    return "http://localhost:8080/web/game.html?gp="+ gamePlayers[i].id;
+                    return "/web/game.html?gp="+ gamePlayers[i].id;
                 }
             }
             return "";
         },
 
         createGame : async function(){
-            this.gameCreated = await  fetch('http://localhost:8080/api/games',{
+            this.gameCreated = await  fetch('/api/games',{
                                 method: "POST",
                                 body: {},
                                 headers: {
@@ -161,7 +166,7 @@
 
              this.getGames();
 
-            this.scores =  await  fetch('http://localhost:8080/api/leaderboard',{
+            this.scores =  await  fetch('/api/leaderboard',{
                              methods: "GET",
                          })
                          .then(res => res.json())
@@ -170,7 +175,7 @@
         },
 
         joinGame : async function(gameId){
-            await  fetch('http://localhost:8080/api/game/'+gameId+'/players',{
+            await  fetch('/api/game/'+gameId+'/players',{
                             method: "POST",
                             body:{},
                             headers: {

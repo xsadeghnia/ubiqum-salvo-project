@@ -170,6 +170,7 @@ public class SalvoController {
         public String shipType;
         public int nrOfHits;
         public boolean sink;
+        public List<String> hitLocations;
     }
     private List<HitModel> getHits(List<Ship> ships, List<Salvo> accumSalvos, Salvo salvo){
         List<HitModel> hitModels = new ArrayList<>();
@@ -180,12 +181,14 @@ public class SalvoController {
 
             // Calculate hit locations
             hitModel.nrOfHits = 0;
+            hitModel.hitLocations = new ArrayList<>();
             hitModel.shipType = ship.getShipType().getName();
             hitModel.sink = false;
             for (String shipLoc :  ship.getShipLocations()) {
                 for (String salvoLoc : salvo.getSalvoLocations()) {
                     if (shipLoc.equals(salvoLoc)) {
                         hitModel.nrOfHits++;
+                        hitModel.hitLocations.add(shipLoc);
                     }
                 }
             }
@@ -598,7 +601,6 @@ public class SalvoController {
                     gamePlayer.get().getGame().getGamePlayers().get(1).getShips().size()) == 9){
                 gamePlayer.get().getGame().setState(Game.IndexZeroSalvo);
                 gameRepository.save(gamePlayer.get().getGame());
-                System.out.println(">>>>>>>>>>>indexZeroSalvo" + Game.IndexZeroSalvo);
             }
 
             return new PlacingShipsResultModel(true, "successful to placing ships!",gamePlayer.get().getShips().size());

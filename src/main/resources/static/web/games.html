@@ -29,7 +29,7 @@
                     <input type="text" v-model="username" placeholder="Username">
                 </div>
                 <div  class="single-row">
-                    <input type=" text" v-model="password" placeholder="Password">
+                    <input type="password" v-model="password" placeholder="Password">
                 </div>
                 <div class="single-row warning"> {{loginErrorMessage}}</div>
                 <div  class="single-row">
@@ -53,9 +53,9 @@
                  <input type=" text" v-model="username" placeholder="Username">
              </div>
              <div  class="single-row">
-                 <input type=" text" v-model="password" placeholder="Password">
+                 <input type="password" v-model="password" placeholder="Password">
              </div>
-            <div class="single-row warning"> {{loginErrorMessage}}</div>
+            <div class="single-row warning"> {{signUpErrorMessage}}</div>
              <div  class="single-row">
                  <button class="login-btn" @click="signUp">Sign Up</button>
              </div>
@@ -96,7 +96,7 @@
             <div class="scroll-tbl">
                 <table class="games-tbl">
                     <tr>
-                         <th>Game</th>
+                         <th>Date Time</th>
                          <th>Player 1</th>
                          <th>Player 2</th>
                          <th v-if="state == 'loginedState'">State</th>
@@ -107,7 +107,7 @@
                          <td v-for="gamePlayer in game.gamePlayers" >{{gamePlayer.player.firstName}} {{gamePlayer.player.lastName}}</td>
                          <td v-if="game.gamePlayers.length == 1"></td>
                          <td v-if="game.gamePlayers.length == 0 || game.gamePlayers.length == 1  && state == 'loginedState'  && game.state != 2 && !isCurrentUser(game.gamePlayers)">
-                          <button class="join-btn" v-on:click="joinGame(game.id)">Join Game</button>
+                          <button class="join-btn" v-on:click="joinGame(game.id)">Join</button>
                         </td>
                          <td v-if=" game.gamePlayers.length == 2 && state == 'loginedState' && game.state != 2">Full</td>
                          <td v-if="isCurrentUser(game.gamePlayers) && game.gamePlayers.length != 2 && game.state != 2">Waiting...</td>

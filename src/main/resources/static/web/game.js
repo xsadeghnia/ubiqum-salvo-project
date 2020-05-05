@@ -39,7 +39,7 @@
   },
      methods:{
          updateGrid : async function(){
-                this.game = await  fetch('http://localhost:8080/api/game_view/'+this.parameter.gp,{
+                this.game = await  fetch('/api/game_view/'+this.parameter.gp,{
                             methods: "GET",
                         })
                         .then(res => res.json())
@@ -54,8 +54,10 @@
                         }
                 }
                 for(var k = 0 ; k < this.game[0].salvos.length ; k++){
+                    // console.log("k is:"+k);
                     var fireLocations = this.game[0].salvos[k].salvoLocations
                     for(var l = 0; l < fireLocations.length ; l++){
+                        // console.log(this.game[0]);
                         if(this.game[0].salvos[k].playerId == this.currentPlayer.id){
                             this.$refs["O" + fireLocations[l]][0].style.backgroundColor ='orange';
                             this.$refs["O" + fireLocations[l]][0].innerHTML = this.game[0].salvos[k].turn ;
@@ -63,11 +65,15 @@
                             this.$refs["P" + fireLocations[l]][0].style.backgroundColor ='orange';
                             this.$refs["P" + fireLocations[l]][0].innerHTML = this.game[0].salvos[k].turn ;
                         }
-                        if(this.game[0].ships.includes(fireLocations[l])){
-                            console.log("fireLocation is:"+fireLocations);
-                            this.$refs["O" + fireLocations[l]][0].style.backgroundColor ='red';
-                            this.$refs["P" + fireLocations[l]][0].style.backgroundColor ='red';
-                        }
+                        /*for(var shipCounter = 0 ; shipCounter < this.game[0].ships.length; shipCounter++){
+                            // console.log(">>>>>>>>>"+ fireLocations);
+                            if(this.game[0].ships[shipCounter].shipLocations.includes(fireLocations[l])){
+                                // console.log("fireLocation is:"+fireLocations);
+                                // this.$refs["O" + fireLocations[l]][0].style.backgroundColor ='red';
+                                this.$refs["P" + fireLocations[l]][0].style.backgroundColor ='red';
+                            }
+                        }*/
+                        
                     }
                 }
                  var gameplayers = this.game[0].gamePlayers;
@@ -81,12 +87,12 @@
                     }
                 }
 
-             this.getHits();
+             this.calcHits();
          },
 
          init : async  function(){
             this.updateGrid();
-            this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
+            this.currentPlayer =  await  fetch('/api/principal',{
                                        methods: "GET",
                                    })
                                    .then(res => res.json())
@@ -174,7 +180,7 @@
             this.currentGamePlayerId = this.getURLParameter('gp');
             console.log(this.currentGamePlayerId);
 
-            var result = await fetch('http://localhost:8080/api/games/players/'+this.currentGamePlayerId+'/ships',{
+            var result = await fetch('/api/games/players/'+this.currentGamePlayerId+'/ships',{
                                 method: "POST",
                                 body:JSON.stringify(this.placingShipObject),
                                 headers: {
@@ -203,6 +209,7 @@
          shotSelected : function(cell){
              for(var i = 0; i <  this.game[0].salvos.length; i++){
                 for(var j = 0; j < this.game[0].salvos[i].salvoLocations.length; j++){
+                    // Check if it is my slavo
                     if(cell == this.game[0].salvos[i].salvoLocations[j] &&
                         this.currentPlayer.id == this.game[0].salvos[i].playerId){
                         return;
@@ -229,7 +236,7 @@
 
               this.currentGamePlayerId = this.getURLParameter('gp');
               var salvoObject = {salvoLocations : this.salvoLocations}
-              var result = await fetch('http://localhost:8080/api/games/players/'+this.currentGamePlayerId+'/salvos',{
+              var result = await fetch('/api/games/players/'+this.currentGamePlayerId+'/salvos',{
                                 method: "POST",
                                 body:JSON.stringify(salvoObject),
                                 headers: {
@@ -249,45 +256,95 @@
               this.getState();
          },
 
-         getHits : function(){
-             this.hitsOnMe = [];
-             for(var i = 0; i < this.game[0].playerGameResult.length; i++){
-                var x = this.game[0].playerGameResult[i];
-                var turn = x.turn;
-                var hits = "";
-                x.hits.forEach(function(h) {
-                    hits += h.shipType + " (" + h.nrOfHits + ")";
-                });
-                var left = this.game[0].playerGameResult[i].nrOfShipsLeft;
-                this.hitsOnMe.push({"turn" : turn, "hits" : hits, "left" : left});
-             }
-             this.hitsOnMe.sort(function(a, b) {
-                if (a.turn == b.turn) { return 0; }
-                if (a.turn < b.turn) { return 1; }
-                if (a.turn > b.turn) { return -1; }
-             });
+         calcHits : function(){
+            this.playerCarrier = 0;
+            this.playerBattleship = 0;
+            this.playerDestroyer = 0;
+            this.playerSubmarine = 0;
+            this.playerPatrolboat= 0;
+            var pGameResult = this.game[0].playerGameResult;
+            for(var i = 0; i < pGameResult.length; i++){
+                for(var j = 0; j < pGameResult[i].hits.length; j++){
+                    if(pGameResult[i].hits[j].shipType == "Carrier"){
+                        this.playerCarrier += pGameResult[i].hits[j].nrOfHits;
+                    }else if (pGameResult[i].hits[j].shipType == "Battleship") {
+                        this.playerBattleship += pGameResult[i].hits[j].nrOfHits;
+                    }else if (pGameResult[i].hits[j].shipType == "Destroyer") {
+                        this.playerDestroyer += pGameResult[i].hits[j].nrOfHits;
+                    }else if (pGameResult[i].hits[j].shipType == "Submarine") {
+                        this.playerSubmarine += pGameResult[i].hits[j].nrOfHits;
+                    }else if (pGameResult[i].hits[j].shipType == "Patrol Boat") {
+                        this.playerPatrolboat += pGameResult[i].hits[j].nrOfHits;
+                    }
+                    for (var hitLocCounter = 0; hitLocCounter < pGameResult[i].hits[j].hitLocations.length; hitLocCounter++) {
+                        this.$refs["P" + pGameResult[i].hits[j].hitLocations[hitLocCounter]][0].style.backgroundColor ='#f25f45';
+                    }
+                }
+            }
+            this.opponentCarrier = 0;
+            this.opponentBattleship = 0;
+            this.opponentDestroyer = 0;
+            this.opponentSubmarine = 0;
+            this.opponentPatrolboat = 0;
+            var oGameResult = this.game[0].opponentGameResult;
+            for(var i = 0; i < oGameResult.length; i++){
+                for(var j = 0; j < oGameResult[i].hits.length; j++){
+                   if(oGameResult[i].hits[j].shipType == "Carrier"){
+                        this.opponentCarrier += oGameResult[i].hits[j].nrOfHits;
+                    }else if (oGameResult[i].hits[j].shipType == "Battleship") {
+                        this.opponentBattleship += oGameResult[i].hits[j].nrOfHits;
+                    }else if (oGameResult[i].hits[j].shipType == "Destroyer") {
+                        this.opponentDestroyer += oGameResult[i].hits[j].nrOfHits;
+                    }else if (oGameResult[i].hits[j].shipType == "Submarine") {
+                        this.opponentSubmarine += oGameResult[i].hits[j].nrOfHits;
+                    }else if (oGameResult[i].hits[j].shipType == "Patrol Boat") {
+                        this.opponentPatrolboat += oGameResult[i].hits[j].nrOfHits;
+                    }
+                    for (var hitLocCounter = 0; hitLocCounter < oGameResult[i].hits[j].hitLocations.length; hitLocCounter++) {
+                        this.$refs["O" + oGameResult[i].hits[j].hitLocations[hitLocCounter]][0].style.backgroundColor ='#f25f45';
+                    }
+                }
+            }
 
-              this.hitsOnOpp = [];
-              for(var i = 0; i < this.game[0].opponentGameResult.length; i++){
-                 var x = this.game[0].opponentGameResult[i];
-                 var turn = x.turn;
-                 var hits = "";
-                 x.hits.forEach(function(h) {
-                     hits += h.shipType + " (" + h.nrOfHits + ")";
-                 });
-                 var left = this.game[0].opponentGameResult[i].nrOfShipsLeft;
-                 this.hitsOnOpp.push({"turn" : turn, "hits" : hits, "left" : left});
-              }
-              this.hitsOnOpp.sort(function(a, b) {
-                 if (a.turn == b.turn) { return 0; }
-                 if (a.turn < b.turn) { return 1; }
-                 if (a.turn > b.turn) { return -1; }
-              });
+
+             // this.hitsOnMe = [];
+             // for(var i = 0; i < this.game[0].playerGameResult.length; i++){
+             //    var x = this.game[0].playerGameResult[i];
+             //    var turn = x.turn;
+             //    var hits = "";
+             //    x.hits.forEach(function(h) {
+             //        hits += h.shipType + " (" + h.nrOfHits + ")";
+             //    });
+             //    var left = this.game[0].playerGameResult[i].nrOfShipsLeft;
+             //    this.hitsOnMe.push({"turn" : turn, "hits" : hits, "left" : left});
+             // }
+             // this.hitsOnMe.sort(function(a, b) {
+             //    if (a.turn == b.turn) { return 0; }
+             //    if (a.turn < b.turn) { return 1; }
+             //    if (a.turn > b.turn) { return -1; }
+             // });
+
+             //  this.hitsOnOpp = [];
+             //  for(var i = 0; i < this.game[0].opponentGameResult.length; i++){
+             //     var x = this.game[0].opponentGameResult[i];
+             //     var turn = x.turn;
+             //     var hits = "";
+             //     x.hits.forEach(function(h) {
+             //         hits += h.shipType + " (" + h.nrOfHits + ")";
+             //     });
+             //     var left = this.game[0].opponentGameResult[i].nrOfShipsLeft;
+             //     this.hitsOnOpp.push({"turn" : turn, "hits" : hits, "left" : left});
+             //  }
+             //  this.hitsOnOpp.sort(function(a, b) {
+             //     if (a.turn == b.turn) { return 0; }
+             //     if (a.turn < b.turn) { return 1; }
+             //     if (a.turn > b.turn) { return -1; }
+             //  });
          },
 
          getState : async function(){
             this.currentGamePlayerId = this.getURLParameter('gp');
-            var result = await fetch('http://localhost:8080/api/state/'+this.currentGamePlayerId,{
+            var result = await fetch('/api/state/'+this.currentGamePlayerId,{
                           methods: "GET",
                         })
                         .then(res => res.json())
@@ -300,8 +357,10 @@
                 this.state = "gameOver";
             }else if(result.state == 10){
                 this.state = "choosingSalvo";
+                this.updateGrid;
             }else if (result.state == 20){
                 this.state = "waiting";
+                this.updateGrid;
             }
             console.log("state is :" +this.state);
          }
