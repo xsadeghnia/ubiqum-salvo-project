@@ -19,7 +19,7 @@
                 <div class="nav-cell" v-on:click="status='gamesStatus'">Games</div>
                 <div class="nav-cell" v-on:click="status='leaderboardStatus'">Leaderboard</div>
                 <div class="nav-cell" v-on:click="status='loginStatus'" v-if="state == 'mainState'">Log In</div>
-                <div class="nav-cell" v-on:click="state='mainState'"  v-if = "state == 'loginedState'">Log Out</div>
+                <div class="nav-cell" v-on:click=" logOut"  v-if = "state == 'loginedState'">Log Out</div>
             </div>
         </div>
         <div class="main-box" v-if="status =='loginStatus'">
@@ -72,25 +72,28 @@
         </div>
         <div class="main-box" v-if = "status == 'leaderboardStatus'">
             <div class="title" >Leaderboard</div>
-            <table class="score-tbl">
-                    <tr>
-                        <th>Name</th>
-                        <th>Total</th>
-                        <th>Won</th>
-                        <th>Lost</th>
-                        <th>Tied</th>
-                    </tr>
-                    <tr v-for="score in scores">
-                        <td>{{score.firstName}} {{score.lastName}}</td>
-                        <td>{{score.totalScore}}</td>
-                        <td>{{score.totalWin}}</td>
-                        <td>{{score.totalLoss}}</td>
-                        <td>{{score.totalTie}}</td>
-                    </tr>
-            </table>
+            <div class="scroll-tbl">
+                <table class="score-tbl">
+                        <tr>
+                            <th>Name</th>
+                            <th>Total</th>
+                            <th>Won</th>
+                            <th>Lost</th>
+                            <th>Tied</th>
+                        </tr>
+                        <tr v-for="score in scores">
+                            <td>{{score.firstName}} {{score.lastName}}</td>
+                            <td>{{score.totalScore}}</td>
+                            <td>{{score.totalWin}}</td>
+                            <td>{{score.totalLoss}}</td>
+                            <td>{{score.totalTie}}</td>
+                        </tr>
+                </table>
+            </div>
         </div>
         <div class="main-box" v-if="status == 'gamesStatus'">
             <div class="title" >Games</div>
+            <div class="scroll-tbl">
                 <table class="games-tbl">
                     <tr>
                          <th>Game</th>
@@ -111,11 +114,11 @@
                          <td v-if="game.state == 2 && state == 'loginedState'">Finished</td>
                     </tr>
                 </table>
-                <div class="create-btn-holder" v-if="state == 'loginedState' && status == 'gamesStatus'" v-on:click="createGame">
+            </div>
+            <div class="create-btn-holder" v-if="state == 'loginedState' && status == 'gamesStatus'" v-on:click="createGame">
                 <button class="create-btn">Create Game</button>
             </div>
             </div>
-            
         </div>
     </div>
     <script src="games.js"></script>

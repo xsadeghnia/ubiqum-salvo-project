@@ -1,7 +1,6 @@
 .gamesBody{
     max-width: 100%;
     margin: auto;
-    font-family: sans-serif;
     background-image: url(/images/ship01.jpg);
     background-repeat:no-repeat;
     -webkit-background-size:cover;
@@ -20,7 +19,7 @@
 }
 .main-box{
     display :flex;
-    width :50%;
+    width :53%;
     flex-wrap: wrap;
     border-radius: 2%;
     background: #223c4ec2;
@@ -136,34 +135,88 @@
 .container{
   display: flex;
   flex-flow: wrap;
+  width: 100%;
+  height: -webkit-fill-available;
+  background-color:#223c4ec2;
+  background-repeat: repeat;
+}
+.result-header{
+    display: flex;
+    width: 100%;
+    color: orange;
+    margin-top: 4%;
+    margin-bottom: 1%;
+}
+.left-header{
+    display: flex;
+    width: 50%;
+    justify-content: center;
+}
+.right-header{
+    display: flex;
+    width: 50%;
+    justify-content: center;
 }
 .ships-grid-row{
      display: flex;
      width:100%;
      justify-content: center;
-     margin-bottom: 7%;
+}
+.singel-salvo-holder{
+    display: flex;
+    width:30%;  
+}
+.singel-result-holder{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:16%; 
+}
+.singel-result-holder p{
+    color: orange;
+    font-size: medium;
+}
+.result-tbl{
+    width: 75%;
+    color: orange;
+}
+.result-tbl td{
+    border-bottom: 1px solid gray;
+    padding-top: 3%;
+    padding-bottom: 3%;
+}
+.space{
+    display: flex;
+    width:8%; 
 }
 .row{
     display: flex;
-    width:100%;
+    width:80%;
 }
 .salvo-tbl{
     border-collapse: collapse;
-     width: 30%;
-     margin-right:7%;
+     width: 100%;
      text-align: center;
-     font-family: -webkit-pictograph;
+}
+.background-color{
+    background-color: #586c7994;
+}
+.salvo-tbl tr td:nth-child(1) {
+  background: #586c7994;
 }
 .cell{
-    border: 1px solid lightgray;
-    width: 10px;
-    color: #336335;
-    padding: 3%;
+    border: 1px solid gray;
+    color: white;
+    width: 5%;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 .ship-type-holder{
     display: flex;
-    width:100%;
+    width:68%;
     flex-flow: wrap;
+    border: 1px solid gray;
+    color: orange;
 
 }
 .ship-type-row{
@@ -171,28 +224,40 @@
     width:100%;
     margin: 1%;
 }
+.ship-type-cell{
+    display: flex;
+    width: 50%;
+}
 .done-btn-row{
       display: flex;
       width:100%;
 }
 .done-btn-row button{
-    width:20%;
-    margin:5%;
+    width: 40%;
+    padding-bottom: 1%;
+    padding-top: 1%;
+    background-color: orange;
+    border: none;
+    color: #223c4ec2;
 }
 .score-tbl{
     width : 65%;
     margin-bottom: 7%;
-    margin-top: 2%;
     color: orange;
-    font-family: Arial, Helvetica, sans-serif;
-    justify-content: center;
+}
+.score-tbl td,th{
+     padding-top : 3%;
+    padding-bottom: 3%;
+    margin-bottom: 10%;
+    border-bottom: 1px solid gray;
+    color: orange;
+    text-align: center;
 }
 .score-tbl td{
-    padding : 1%;
-
+    font-size: 1.1vw;
 }
 .games-tbl{
-     width : 80%;
+     width : 79%;
      margin-bottom: 10%;
 }
 .games-tbl td{
@@ -229,8 +294,15 @@
     border:none;
     color: #223c4ec2;
     font-size: 1.1vw;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+.scroll-tbl{
+    width: 100%;
+    display: flex;
+    overflow-y: scroll;
+    height: 300px;
+    justify-content: center;
 }
 .info-row{
     display:flex;
@@ -239,8 +311,9 @@
 }
 .create-btn-holder{
      display:flex;
-     width:100%;
+     width: 100%;
      margin-bottom: 10%;
+     margin-top: 30px;
      justify-content: center;
 }
 .Log-in-form-holder{
@@ -278,6 +351,8 @@
     width: 70%;
     font-size: medium;
     margin-bottom: 5%;
+    padding-top: 1%;
+    padding-bottom: 1%;
 }
 .signup-link{
     color: orange;
@@ -289,8 +364,8 @@
     color: #fef59f;
 }
 .warning{
-    color:orange;
-    margin-bottom: 5%
+    color:red;
+    
 }
 .salvo-holder{
     display: flex;
@@ -319,4 +394,15 @@
 .player-result td,th{
      
       padding : 1%;
+}
+.tip-holder{
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    justify-content: center;
+}
+.tip-holder select{
+    background-color: #223c4ec2;
+    color: orange;
+    font-size: 1vw;
 }

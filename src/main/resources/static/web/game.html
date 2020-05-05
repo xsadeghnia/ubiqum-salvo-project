@@ -7,107 +7,202 @@
     <title>Ship Locations</title>
 </head>
 
-<body>
+<body class="gamesBody">
 <div id="myVue">
     <div class="container">
+        <div class="result-header">
+            <div class="left-header">You: {{currentPlayer.firstName}} {{currentPlayer.lastName}}</div>
+            <div class="right-header">Opponent:{{currentOpponent.firstName}} {{currentOpponent.lastName}}</div>
+        </div>
         <div class="ships-grid-row">
-            <table class="salvo-tbl">
-                <tr>
-                    <td class="cell" v-for="row in rows">{{row}}</td>
-                </tr>
-                <tr v-for="column in columns">
-                    <td class="cell" v-for="row in rows" :ref="'P'+column+row" v-on:click="cellSelected(column+row)">
-                        <span v-if="row == 0">{{column}}</span>
-                    </td>
-                </tr>
+            <div class="singel-result-holder">
+               
+                <table class="result-tbl">
+                    <tr>
+                        <th>Your ships</th>
+                    </tr>
+                    <tr>
+                        <td>Carrier</td>
+                        <td>{{playerCarrier}}</td>
+                        <td>/</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>Battleship</td>
+                        <td>{{playerBattleship}}</td>
+                        <td>/</td>
+                        <td>4</td>
+                    </tr>
+                    <tr>
+                        <td>Destroyer</td>
+                        <td> {{playerDestroyer}}</td>
+                        <td>/</td>
+                        <td>3</td>
+                    </tr>
+                     <tr>
+                        <td>Submarine</td>
+                        <td>{{playerSubmarine}}</td>
+                        <td>/</td>
+                        <td>3</td>
+                    </tr>
+                     <tr>
+                        <td>Patrolboat</td>
+                        <td>{{playerPatrolboat}}</td>
+                        <td>/</td>
+                        <td>2</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="singel-salvo-holder">
+                <table class="salvo-tbl">
+                    <tr>
+                        <td class="cell background-color" v-for="row in rows">{{row}}</td>
+                    </tr>
+                    <tr v-for="column in columns">
+                        <td class="cell" v-for="row in rows" :ref="'P'+column+row" v-on:click="cellSelected(column+row)">
+                            <span v-if="row == 0">{{column}}</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="space"></div>
+            <div class="singel-salvo-holder">
+                <table class="salvo-tbl">
+                    <tr>
+                        <td class="cell background-color" v-for="row in rows">{{row}}</td>
+                    </tr>
+                    <tr v-for="column in columns">
+                        <td class="cell" v-for="row in rows" :ref="'O'+column+row" v-on:click="shotSelected(column+row)">
+                            <span v-if="row == 0">{{column}}</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="singel-result-holder">
 
-            </table>
-            <table class="salvo-tbl">
-                <tr>
-                    <td class="cell" v-for="row in rows">{{row}}</td>
-                </tr>
-                <tr v-for="column in columns">
-                    <td class="cell" v-for="row in rows" :ref="'O'+column+row" v-on:click="shotSelected(column+row)">
-                        <span v-if="row == 0">{{column}}</span>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="ship-type-holder" v-if="state == 'choosingShips'">
-            <div class="ship-type-row">
-                You should select 5 ships:
-            </div>
-            <div class="ship-type-row">
-                1- Click on a cell in the left grid (Starting point): {{startingPoint}}
-            </div>
-            <div  class="ship-type-row">
-                2- Select a ship type:
-                <select @change="getShipTypeValue($event)">
-                <option value="0">Select</option>
-                <option value="1">Carrier (length:5)</option>
-                <option value="2">Battleship  (length:4)</option>
-                <option value="3">Submarine (length:3)</option>
-                <option value="4">Destroyer   (length:3)</option>
-                <option value="5">Patrol Boat  (length:2)</option>
-            </select>
-            </div>
-            <div class="ship-type-row">
-                3- Select a direction:
-                <select v-model="shipDirection">
-                <option selected = selected>Select</option>
-                <option>Vertical</option>
-                <option>Horizontal</option>
-            </select>
-            </div>
-            <div class="ship-type-row warning">
-                {{exceptionMessage}}
-            </div>
-            <div class="done-btn-row">
-                <button v-on:click="placingShips">Done</button>
+                <table class="result-tbl">
+                      <tr>
+                        <th>Enemy's ships</th>
+                    </tr>
+                    <tr>
+                        <td>Carrier</td>
+                        <td>{{opponentCarrier}}/</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>Battleship</td>
+                        <td>{{opponentBattleship}}/</td>
+                        <td>4</td>
+                    </tr>
+                    <tr>
+                        <td>Destroyer</td>
+                        <td>{{opponentDestroyer}}/</td>
+                        <td>3</td>
+                    </tr>
+                     <tr>
+                        <td>Submarine</td>
+                        <td>{{opponentSubmarine}}/</td>
+                        <td>3</td>
+                    </tr>
+                     <tr>
+                        <td>Patrolboat</td>
+                        <td>{{opponentPatrolboat}}/</td>
+                        <td>2</td>
+                    </tr>
+                </table>
             </div>
         </div>
-        <div class="salvo-holder" v-if="state == 'choosingSalvo'">
-            <div class="salvo-row">
-                You can select up to 5 shots in the right grid:
+        <div class="tip-holder">
+            <div class="ship-type-holder" v-if="state == 'choosingShips'">
+                <div class="ship-type-row">
+                    <div class="ship-type-row warning">
+                    {{exceptionMessage}}
+                </div>
+                </div>
+                <div class="ship-type-row">
+                    <div class="ship-type-cell">
+                        You should select 5 ships in the Left grid:
+                    </div>
+                    <div class="ship-type-cell">
+                        1- Click on a cell in the left grid (Starting point): {{startingPoint}}
+
+                    </div>    
+                </div>
+                <div class="ship-type-row">
+                    <div class="ship-type-cell">
+                        2- Select a ship type:
+                        <select @change="getShipTypeValue($event)">
+                            <option value="0">Select</option>
+                            <option value="1">Carrier (length:5)</option>
+                            <option value="2">Battleship  (length:4)</option>
+                            <option value="3">Submarine (length:3)</option>
+                            <option value="4">Destroyer   (length:3)</option>
+                            <option value="5">Patrol Boat  (length:2)</option>
+                        </select>
+                    </div>
+                    <div class="ship-type-cell">
+                        3- Select a direction:
+                        <select v-model="shipDirection">
+                            <option selected = selected>Select</option>
+                            <option>Vertical</option>
+                            <option>Horizontal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ship-type-row">
+                    <div class="ship-type-cell">
+                        
+                    </div>
+                    <div class="ship-type-cell">
+                         <div class="done-btn-row">
+                            <button v-on:click="placingShips">Done</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="salvo-row">
-                shots:{<span v-for="shot in salvoLocations">{{shot}}</span>}
+            <div class="salvo-holder" v-if="state == 'choosingSalvo'">
+                <div class="salvo-row">
+                    You can select up to 5 shots in the right grid:
+                </div>
+                <div class="salvo-row">
+                    shots:{<span v-for="shot in salvoLocations">{{shot}}</span>}
+                </div>
+                <div class="salvo-row  warning">
+                   {{exceptionMessage}}
+                </div>
+                <div class="salvo-row">
+                   <button v-on:click="firingSalvos" >Done</button>
+                </div>
             </div>
-            <div class="salvo-row  warning">
-               {{exceptionMessage}}
+            <div class="result_holder" v-if="state == 'choosingSalvo' || state == 'waiting'">
+                <table class="player-result">
+                    <tr>
+                        <th>Turn</th>
+                        <th>Hits</th>
+                        <th>Left</th>
+                    </tr>
+                    <tr v-for="hit in hitsOnMe">
+                        <td>{{hit.turn}}</td>
+                        <td >{{hit.hits}}</td>
+                        <td>{{hit.left}}</td>
+                    </tr>
+                </table>
+                <table class="player-result">
+                    <tr>
+                        <th>Turn</th>
+                        <th>Hits</th>
+                        <th>Left</th>
+                    </tr>
+                    <tr v-for="hit in hitsOnOpp">
+                        <td>{{hit.turn}}</td>
+                        <td >{{hit.hits}}</td>
+                        <td>{{hit.left}}</td>
+                    </tr>
+                </table>
             </div>
-            <div class="salvo-row">
-               <button v-on:click="firingSalvos" >Done</button>
+            <div v-if="state == 'gameOver'">
+               GameOver
             </div>
-        </div>
-        <div class="result_holder" v-if="state == 'choosingSalvo' || state == 'waiting'">
-            <table class="player-result">
-                <tr>
-                    <th>Turn</th>
-                    <th>Hits</th>
-                    <th>Left</th>
-                </tr>
-                <tr v-for="hit in hitsOnMe">
-                    <td>{{hit.turn}}</td>
-                    <td >{{hit.hits}}</td>
-                    <td>{{hit.left}}</td>
-                </tr>
-            </table>
-            <table class="player-result">
-                <tr>
-                    <th>Turn</th>
-                    <th>Hits</th>
-                    <th>Left</th>
-                </tr>
-                <tr v-for="hit in hitsOnOpp">
-                    <td>{{hit.turn}}</td>
-                    <td >{{hit.hits}}</td>
-                    <td>{{hit.left}}</td>
-                </tr>
-            </table>
-        </div>
-        <div v-if="state == 'gameOver'">
-           GameOver
         </div>
     </div>
 </div>

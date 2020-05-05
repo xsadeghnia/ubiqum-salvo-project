@@ -216,6 +216,8 @@ public class SalvoController {
     public List<Object> getGameView(@PathVariable("id") Long gamePlayerId, Principal principal){
         class PlayerModel{
             public Long id;
+            public String firstName;
+            public String lastName;
             public String email;
         }
         class ShipModel{
@@ -268,6 +270,8 @@ public class SalvoController {
             gamePlayerModel.id = gp.getId();
             gamePlayerModel.player = new PlayerModel();
             gamePlayerModel.player.id = gp.getPlayer().getId();
+            gamePlayerModel.player.firstName = gp.getPlayer().getFirstName();
+            gamePlayerModel.player.lastName = gp.getPlayer().getLastName();
             gamePlayerModel.player.email = gp.getPlayer().getUserName();
             gplayers.add(gamePlayerModel);
 

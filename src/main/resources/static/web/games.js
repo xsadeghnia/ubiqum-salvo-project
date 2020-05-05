@@ -17,20 +17,24 @@
         status : "homeStatus",
     },
     methods:{
-        init : async function(){
+        getGames:async function(){
            this.games =  await  fetch('http://localhost:8080/api/games',{
                             methods: "GET",
                         })
                         .then(res => res.json())
                         .then(data => data)
                         .catch(err => err)
-
-           this.scores =  await  fetch('http://localhost:8080/api/leaderboard',{
+                      },
+        init : async function(){
+          
+            this.getGames();
+           var arr=  await  fetch('http://localhost:8080/api/leaderboard',{
                              methods: "GET",
                          })
                          .then(res => res.json())
                          .then(data => data)
                          .catch(err => err)
+            this.scores = arr.sort((a, b) => (a.totalScore < b.totalScore) ? 1 : -1);             
 
              this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
                                                               methods: "GET",
@@ -77,9 +81,11 @@
                            this.state = "loginedState" ;
                            this.status = "gamesStatus";
                         }
+
+            setInterval(function () {  this.getGames(); }.bind(this) ,10000);
+
         },
         logOut : async function(){
-            this.state = "mainState";
             await  fetch('http://localhost:8080/api/logout',{
                                         methods: "GET",
                                     })
@@ -89,14 +95,15 @@
 
 
             this.currentPlayer =  await  fetch('http://localhost:8080/api/principal',{
-                                                               methods: "GET",
-                                                           })
-                                                           .then(res => res.json())
-                                                           .then(data => data)
-                                                           .catch(err => err)
+                                       methods: "GET",
+                                   })
+                                   .then(res => res.json())
+                                   .then(data => data)
+                                   .catch(err => err)
+
+            this.state = "mainState";
         },
         signUp : async function(){
-//            this.state = "loginState";
             var signUpObject = {"username": this.username , "password" : this.password , "firstName" : this.firstName, "lastName": this.lastName};
             this.signUpResult = await  fetch('http://localhost:8080/api/signup',{
                                     method: "POST",
@@ -152,13 +159,14 @@
                             .then(data => data)
                             .catch(err => err)
 
-            this.games =  await  fetch('http://localhost:8080/api/games',{
-                                    methods: "GET",
-                                })
-                                .then(res => res.json())
-                                .then(data => data)
-                                .catch(err => err)
+             this.getGames();
 
+            this.scores =  await  fetch('http://localhost:8080/api/leaderboard',{
+                             methods: "GET",
+                         })
+                         .then(res => res.json())
+                         .then(data => data)
+                         .catch(err => err)
         },
 
         joinGame : async function(gameId){
@@ -173,12 +181,7 @@
                         .then(data => data)
                         .catch(err => err)
 
-            this.games =  await  fetch('http://localhost:8080/api/games',{
-                            methods: "GET",
-                        })
-                        .then(res => res.json())
-                        .then(data => data)
-                        .catch(err => err)
+            this.getGames();
         },
     },
     created: function() {
