@@ -36,6 +36,7 @@
      opponentDestroyer : 0,
      opponentSubmarine : 0,
      opponentPatrolboat : 0,
+     status : "",
   },
      methods:{
          updateGrid : async function(){
@@ -50,14 +51,12 @@
                 for( var i = 0 ; i <  this.game[0].ships.length ; i++){
                         var locs = this.game[0].ships[i].shipLocations;
                         for(var j = 0 ; j< locs.length ; j++){
-                            this.$refs["P" + locs[j]][0].style.backgroundColor = '#bfe8e9';
+                            this.$refs["P" + locs[j]][0].style.backgroundColor = 'silver';
                         }
                 }
                 for(var k = 0 ; k < this.game[0].salvos.length ; k++){
-                    // console.log("k is:"+k);
                     var fireLocations = this.game[0].salvos[k].salvoLocations
                     for(var l = 0; l < fireLocations.length ; l++){
-                        // console.log(this.game[0]);
                         if(this.game[0].salvos[k].playerId == this.currentPlayer.id){
                             this.$refs["O" + fireLocations[l]][0].style.backgroundColor ='orange';
                             this.$refs["O" + fireLocations[l]][0].innerHTML = this.game[0].salvos[k].turn ;
@@ -65,15 +64,6 @@
                             this.$refs["P" + fireLocations[l]][0].style.backgroundColor ='orange';
                             this.$refs["P" + fireLocations[l]][0].innerHTML = this.game[0].salvos[k].turn ;
                         }
-                        /*for(var shipCounter = 0 ; shipCounter < this.game[0].ships.length; shipCounter++){
-                            // console.log(">>>>>>>>>"+ fireLocations);
-                            if(this.game[0].ships[shipCounter].shipLocations.includes(fireLocations[l])){
-                                // console.log("fireLocation is:"+fireLocations);
-                                // this.$refs["O" + fireLocations[l]][0].style.backgroundColor ='red';
-                                this.$refs["P" + fireLocations[l]][0].style.backgroundColor ='red';
-                            }
-                        }*/
-                        
                     }
                 }
                  var gameplayers = this.game[0].gamePlayers;
@@ -88,6 +78,17 @@
                 }
 
              this.calcHits();
+            var pSize = this.game[0].playerGameResult.length;
+            var oSize = this.game[0].opponentGameResult.length;
+            if(this.game[0].playerGameResult[pSize-1].nrOfShipsLeft == 0){
+                this.status = "lose";
+            }else if(this.game[0].opponentGameResult[oSize-1].nrOfShipsLeft == 0){
+                this.status = "win";
+            }
+            console.log("opnr:"+this.game[0].opponentGameResult[0].nrOfShipsLeft);
+            console.log("pnr:"+this.game[0].playerGameResult[0].nrOfShipsLeft);
+            console.log("stateeeeeeee:"+this.state);
+
          },
 
          init : async  function(){
@@ -101,8 +102,8 @@
 
             console.log(this.currentPlayer.firstName);                       
             this.getState();
-            setInterval(function () { this.getState(); }.bind(this) ,10000);
-            setInterval(function () { if (this.state == "waiting") this.updateGrid(); }.bind(this) ,2000);
+            setInterval(function () { this.getState(); }.bind(this), 2000);
+            setInterval(function () { this.updateGrid(); }.bind(this), 2000);
 
          },
 
@@ -219,6 +220,9 @@
              for(var i=0; i < this.salvoLocations.length; i++){
                 if(cell == this.salvoLocations[i]){
                     this.salvoLocations.splice(i,1);
+                    if(this.state == "choosingSalvo"){
+                        this.$refs["O" +cell][0].style.backgroundColor ="";
+                    }
                     return;
                 }
              }
@@ -277,7 +281,7 @@
                         this.playerPatrolboat += pGameResult[i].hits[j].nrOfHits;
                     }
                     for (var hitLocCounter = 0; hitLocCounter < pGameResult[i].hits[j].hitLocations.length; hitLocCounter++) {
-                        this.$refs["P" + pGameResult[i].hits[j].hitLocations[hitLocCounter]][0].style.backgroundColor ='#f25f45';
+                        this.$refs["P" + pGameResult[i].hits[j].hitLocations[hitLocCounter]][0].style.backgroundColor ='#ff5200';
                     }
                 }
             }
@@ -301,45 +305,10 @@
                         this.opponentPatrolboat += oGameResult[i].hits[j].nrOfHits;
                     }
                     for (var hitLocCounter = 0; hitLocCounter < oGameResult[i].hits[j].hitLocations.length; hitLocCounter++) {
-                        this.$refs["O" + oGameResult[i].hits[j].hitLocations[hitLocCounter]][0].style.backgroundColor ='#f25f45';
+                        this.$refs["O" + oGameResult[i].hits[j].hitLocations[hitLocCounter]][0].style.backgroundColor ='#ff5200';
                     }
                 }
             }
-
-
-             // this.hitsOnMe = [];
-             // for(var i = 0; i < this.game[0].playerGameResult.length; i++){
-             //    var x = this.game[0].playerGameResult[i];
-             //    var turn = x.turn;
-             //    var hits = "";
-             //    x.hits.forEach(function(h) {
-             //        hits += h.shipType + " (" + h.nrOfHits + ")";
-             //    });
-             //    var left = this.game[0].playerGameResult[i].nrOfShipsLeft;
-             //    this.hitsOnMe.push({"turn" : turn, "hits" : hits, "left" : left});
-             // }
-             // this.hitsOnMe.sort(function(a, b) {
-             //    if (a.turn == b.turn) { return 0; }
-             //    if (a.turn < b.turn) { return 1; }
-             //    if (a.turn > b.turn) { return -1; }
-             // });
-
-             //  this.hitsOnOpp = [];
-             //  for(var i = 0; i < this.game[0].opponentGameResult.length; i++){
-             //     var x = this.game[0].opponentGameResult[i];
-             //     var turn = x.turn;
-             //     var hits = "";
-             //     x.hits.forEach(function(h) {
-             //         hits += h.shipType + " (" + h.nrOfHits + ")";
-             //     });
-             //     var left = this.game[0].opponentGameResult[i].nrOfShipsLeft;
-             //     this.hitsOnOpp.push({"turn" : turn, "hits" : hits, "left" : left});
-             //  }
-             //  this.hitsOnOpp.sort(function(a, b) {
-             //     if (a.turn == b.turn) { return 0; }
-             //     if (a.turn < b.turn) { return 1; }
-             //     if (a.turn > b.turn) { return -1; }
-             //  });
          },
 
          getState : async function(){
@@ -351,7 +320,7 @@
                         .then(data => data)
                         .catch(err => err)
             console.log(result);
-            if(result.status == 1){
+            if(result.state == 1){
                 this.state = "choosingShips";
             }else if(result.state == 2){
                 this.state = "gameOver";
@@ -363,8 +332,7 @@
                 this.updateGrid;
             }
             console.log("state is :" +this.state);
-         }
-
+         },
      },
      created: function() {
         this.parameter = this.$route.query

@@ -566,11 +566,22 @@ public class SalvoController {
             // TODO: Check gamePlayer for null
 
             if (gamePlayer.get().getGame().getState() != Game.EnterShips) {
-                return new PlacingShipsResultModel(false, "Waiting for a second player!",0 );
+                return new PlacingShipsResultModel(false, "Waiting for a second player!", 0);
+            }
 
+            if (placingShipModel.shipLocations.size() == 0) {
+                return new PlacingShipsResultModel(false, "No ship location is provided!", 0);
             }
 
             ShipType shipType = shipTypeRepository.findByName(placingShipModel.shipType);
+            if (shipType == null) {
+                return new PlacingShipsResultModel(false, "Enter ship type!", 0);
+            }
+
+            if (shipRepository.findByGamePlayerAndShipType(gamePlayer.get(), shipType).isPresent()) {
+                return new PlacingShipsResultModel(false, "Choose a different ship type!", 0);
+            }
+
             Ship ship = new Ship();
             ship.setShipLocations(placingShipModel.shipLocations);
             ship.setGamePlayer(gamePlayer.get());
@@ -631,6 +642,10 @@ public class SalvoController {
             }
         }
         try {
+            if (salvoModel.salvoLocations.size() == 0) {
+                return new  SalvoResultModel(false,"No salvo location received!", 0);
+            }
+
             Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
             // TODO: Check gamePlayer for null
 
@@ -674,8 +689,6 @@ public class SalvoController {
 
         }
 
-        System.out.println(">>>> " + gamePlayer.get().getGame().getId());
-        System.out.println(">>>> " + gamePlayer.get().getGame().getState());
         switch (gamePlayer.get().getGame().getState()) {
             case Game.Unknown:
                 return new ResultObject(Game.Unknown);

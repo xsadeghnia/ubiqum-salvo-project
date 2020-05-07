@@ -87,7 +87,7 @@
                            this.status = "gamesStatus";
                         }
 
-            setInterval(function () {  this.getGames(); }.bind(this) ,10000);
+            setInterval(function () {  this.getGames(); }.bind(this) ,4000);
 
         },
         logOut : async function(){

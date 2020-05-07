@@ -33,13 +33,12 @@
     background-color:#223c4ec2; 
     height: 53px;
     color: orange;
-    font-family: fantasy;
     margin-bottom: 7%;
 }
 .nav-title-holder{
     display: flex;
     width: 40%;
-    margin-top: 1%;
+    margin-top: 0.5%;
     margin-left: 2%;
 }
 .nav-title{
@@ -47,10 +46,12 @@
     width: 60%;
     font-size: x-large;
     font-weight: bold;
+    font-family: cursive;
 }
 .welcom-player{
     display: flex;
     width: 40%;
+    margin-top: 2.5%;
 }
 .nav-cell-holder{
     display: flex;
@@ -62,7 +63,7 @@
     display: flex;
     width: 25%;
     font-size: medium;
-    font-weight: bold;
+    
     justify-content: flex-end;
     padding-right: 7%;
     cursor: pointer;
@@ -76,7 +77,6 @@
     justify-content: center;
     color: orange;
     font-size: x-large;
-    font-family: fantasy;
     padding-top: 5%; 
     margin-bottom: 7%;
 }
@@ -106,6 +106,7 @@
 }
 .login-icon-holder img{
     width: 11%;
+    height: intrinsic;
 }
 .login-icon-holder img:hover{
     animation: shake 0.5s;
@@ -144,18 +145,19 @@
     display: flex;
     width: 100%;
     color: orange;
-    margin-top: 4%;
-    margin-bottom: 1%;
+    margin-bottom: 0.5%
 }
 .left-header{
     display: flex;
     width: 50%;
-    justify-content: center;
+    margin-left: 16%;
+    align-items: flex-end;
 }
 .right-header{
     display: flex;
     width: 50%;
-    justify-content: center;
+    margin-right: 8%;
+    align-items: flex-end;
 }
 .ships-grid-row{
      display: flex;
@@ -204,6 +206,9 @@
 .salvo-tbl tr td:nth-child(1) {
   background: #586c7994;
 }
+.salvo-tbl td:hover{
+    cursor: crosshair;
+}
 .cell{
     border: 1px solid gray;
     color: white;
@@ -213,32 +218,40 @@
 }
 .ship-type-holder{
     display: flex;
-    width:68%;
+    width:88%;
     flex-flow: wrap;
-    border: 1px solid gray;
     color: orange;
 
 }
 .ship-type-row{
     display:flex;
     width:100%;
-    margin: 1%;
+    margin: 1.1%;
+}
+.first-row{
+    margin-top: 3%
 }
 .ship-type-cell{
     display: flex;
     width: 50%;
+    justify-content: center;
 }
-.done-btn-row{
+.placingShips-btn-row{
       display: flex;
       width:100%;
+      justify-content: center;
+      margin-bottom: 2%;
+      margin-top: 1%;
 }
-.done-btn-row button{
-    width: 40%;
+.placingShips-btn-row button{
+    width: 20%;
     padding-bottom: 1%;
     padding-top: 1%;
+    font-size: 1.1vw;
     background-color: orange;
     border: none;
     color: #223c4ec2;
+    cursor: pointer;
 }
 .score-tbl{
     width : 77%;
@@ -375,14 +388,13 @@
     display: flex;
     width:100%;
     flex-flow: wrap;
+    color: orange;
 }
 .salvo-row{
-   display:flex;
-   width:100%;
-   margin: 1%;
-}
-.salvo-row span{
-    margin-right : 1%;
+  display:flex;
+    width:100%;
+    flex-direction: column;
+    align-items: center;
 }
 .result_holder{
      display: flex;
@@ -399,14 +411,103 @@
      
       padding : 1%;
 }
-.tip-holder{
+.operation-holder{
     display: flex;
     width: 100%;
     height: fit-content;
     justify-content: center;
 }
-.tip-holder select{
+.frame{
+    display: flex;
+    width: 68%;
+    border: 1px solid gray;
+    height: 150px;
+    justify-content: center;
+}
+.operation-holder select{
     background-color: #223c4ec2;
     color: orange;
     font-size: 1vw;
+}
+.sand-clock-holder{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+.sand-clock-holder img{
+    width: 15%;
+    height: 66%;
+}
+.game-result{
+    display: flex;
+    width: 100%;
+    color: orange;
+    flex-wrap: wrap;
+}
+.game-result-row{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+.game-result-row p{
+    font-size: 3.5vw;
+    margin-bottom: 0px;
+    margin-top: 10px;
+}
+.game-result-row a{
+    color: orange;
+    font-size: 1.3vw;
+}
+
+/* Popup container */
+.popup {
+  position: relative;
+  cursor: pointer;
+}
+
+/* The actual popup (appears on top) */
+.popup .popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #ff5200d9;
+  color: #223c4ec2;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
 }

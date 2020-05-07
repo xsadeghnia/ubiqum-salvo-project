@@ -1,6 +1,7 @@
 <!DOCTYPE>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-router"></script>
     <link rel="stylesheet" href="styles.css">
@@ -8,11 +9,10 @@
 </head>
 
 <body class="gamesBody">
-<div id="myVue">
-    <div class="container">
+    <div class="container" id="myVue">
         <div class="result-header">
             <div class="left-header">You: {{currentPlayer.firstName}} {{currentPlayer.lastName}}</div>
-            <div class="right-header">Opponent:{{currentOpponent.firstName}} {{currentOpponent.lastName}}</div>
+            <div class="right-header">Enemy:{{currentOpponent.firstName}} {{currentOpponent.lastName}}</div>
         </div>
         <div class="ships-grid-row">
             <div class="singel-result-holder">
@@ -35,7 +35,7 @@
                     </tr>
                     <tr>
                         <td>Destroyer</td>
-                        <td> {{playerDestroyer}}</td>
+                        <td>{{playerDestroyer}}</td>
                         <td>/</td>
                         <td>3</td>
                     </tr>
@@ -86,102 +86,117 @@
                     </tr>
                     <tr>
                         <td>Carrier</td>
-                        <td>{{opponentCarrier}}/</td>
+                        <td>{{opponentCarrier}}</td>
+                        <td>/</td>
                         <td>5</td>
                     </tr>
                     <tr>
                         <td>Battleship</td>
-                        <td>{{opponentBattleship}}/</td>
+                        <td>{{opponentBattleship}}</td>
+                        <td>/</td>
                         <td>4</td>
                     </tr>
                     <tr>
                         <td>Destroyer</td>
-                        <td>{{opponentDestroyer}}/</td>
+                        <td>{{opponentDestroyer}}</td>
+                        <td>/</td>
                         <td>3</td>
                     </tr>
                      <tr>
                         <td>Submarine</td>
-                        <td>{{opponentSubmarine}}/</td>
+                        <td>{{opponentSubmarine}}</td>
+                        <td>/</td>
                         <td>3</td>
                     </tr>
                      <tr>
                         <td>Patrolboat</td>
-                        <td>{{opponentPatrolboat}}/</td>
+                        <td>{{opponentPatrolboat}}</td>
+                        <td>/</td>
                         <td>2</td>
                     </tr>
                 </table>
             </div>
         </div>
-        <div class="tip-holder">
-            <div class="ship-type-holder" v-if="state == 'choosingShips'">
-                <div class="ship-type-row">
-                    <div class="ship-type-row warning">
-                    {{exceptionMessage}}
-                </div>
-                </div>
-                <div class="ship-type-row">
-                    <div class="ship-type-cell">
-                        You should select 5 ships in the Left grid:
-                    </div>
-                    <div class="ship-type-cell">
-                        1- Click on a cell in the left grid (Starting point): {{startingPoint}}
+        <div class="operation-holder">
+            <div class="frame">
+                <div class="ship-type-holder" v-if="state == 'choosingShips'">
+                    <div class="ship-type-row first-row">
+                        <div class="ship-type-cell">
+                            You should select 5 ships in the Left grid:
+                        </div>
+                        <div class="ship-type-cell">
+                            1- Click on a cell in the left grid (Starting point): {{startingPoint}}
 
-                    </div>    
-                </div>
-                <div class="ship-type-row">
-                    <div class="ship-type-cell">
-                        2- Select a ship type:
-                        <select @change="getShipTypeValue($event)">
-                            <option value="0">Select</option>
-                            <option value="1">Carrier (length:5)</option>
-                            <option value="2">Battleship  (length:4)</option>
-                            <option value="3">Submarine (length:3)</option>
-                            <option value="4">Destroyer   (length:3)</option>
-                            <option value="5">Patrol Boat  (length:2)</option>
-                        </select>
+                        </div>    
                     </div>
-                    <div class="ship-type-cell">
-                        3- Select a direction:
-                        <select v-model="shipDirection">
-                            <option selected = selected>Select</option>
-                            <option>Vertical</option>
-                            <option>Horizontal</option>
-                        </select>
+                    <div class="ship-type-row">
+                        <div class="ship-type-cell">
+                            2- Select a ship type:
+                            <select @change="getShipTypeValue($event)">
+                                <option value="0">Select</option>
+                                <option value="1">Carrier (length:5)</option>
+                                <option value="2">Battleship  (length:4)</option>
+                                <option value="3">Submarine (length:3)</option>
+                                <option value="4">Destroyer   (length:3)</option>
+                                <option value="5">Patrol Boat  (length:2)</option>
+                            </select>
+                        </div>
+                        <div class="ship-type-cell">
+                            3- Select a direction:
+                            <select v-model="shipDirection">
+                                <option selected = selected>Select</option>
+                                <option>Vertical</option>
+                                <option>Horizontal</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="ship-type-row">
-                    <div class="ship-type-cell">
-                        
-                    </div>
-                    <div class="ship-type-cell">
-                         <div class="done-btn-row">
-                            <button v-on:click="placingShips">Done</button>
+
+                    <div class="ship-type-row">
+                         <div class="placingShips-btn-row popup">
+                            <button v-on:click="placingShips">Placing Ships</button>
+                            <p>{{exceptionMessage }}</p>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="salvo-holder" v-if="state == 'choosingSalvo'">
-                <div class="salvo-row">
-                    You can select up to 5 shots in the right grid:
+
+                <div class="salvo-holder" v-if="state == 'choosingSalvo'">
+                    <div class="salvo-row first-row">
+                        You can select up to 5 shots in the right grid:
+                    </div>
+                    <div class="salvo-row">
+                        <div class="placingShips-btn-row">
+                            <button  v-on:click="firingSalvos" >Fire</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="salvo-row">
-                    shots:{<span v-for="shot in salvoLocations">{{shot}}</span>}
+
+                <div class="sand-clock-holder" v-if="state == 'waiting'">
+                    <img src="/images/waitting01.gif">
                 </div>
-                <div class="salvo-row  warning">
-                   {{exceptionMessage}}
+                <div class="game-result" v-if="state == 'gameOver'">
+                    <div class="game-result-row">
+                        <p v-if="status == 'win'">You win!</p> 
+                        <p v-if="status == 'lose'">You Lose!</p>
+                    </div>
+                    <div class="game-result-row">
+                        <a href="games.html">Home</a>
+                    </div>
                 </div>
-                <div class="salvo-row">
-                   <button v-on:click="firingSalvos" >Done</button>
-                </div>
-            </div>
-            
-            <div v-if="state == 'gameOver'">
-               GameOver
-            </div>
+            </div>    
         </div>
     </div>
-</div>
+    <script>
+// When the user clicks on div, open the popup
+function myFunction() {
+  var popup = document.getElementById("myPopup");
+  var error = popup.innerHTML;
+  if(error.length > 0){
+        popup.classList.toggle("show");
+  }
+}
+</script>
 <script src="game.js"></script>
+
 </body>
 
 </html>
