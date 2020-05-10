@@ -154,8 +154,10 @@
                     <div class="ship-type-row">
                          <div class="placingShips-btn-row popup">
                             <button v-on:click="placingShips">Placing Ships</button>
-                            <p>{{exceptionMessage }}</p>
                         </div>
+                    </div>
+                    <div class="ship-type-row">
+                        <p class="exceptionMessage">{{exceptionMessage}}</p>
                     </div>
                 </div>
 
@@ -167,6 +169,9 @@
                         <div class="placingShips-btn-row">
                             <button  v-on:click="firingSalvos" >Fire</button>
                         </div>
+                    </div>
+                    <div class="ship-type-row">
+                        <p class="exceptionMessage">{{exceptionMessage}}</p>
                     </div>
                 </div>
 
@@ -185,16 +190,6 @@
             </div>    
         </div>
     </div>
-    <script>
-// When the user clicks on div, open the popup
-function myFunction() {
-  var popup = document.getElementById("myPopup");
-  var error = popup.innerHTML;
-  if(error.length > 0){
-        popup.classList.toggle("show");
-  }
-}
-</script>
 <script src="game.js"></script>
 
 </body>

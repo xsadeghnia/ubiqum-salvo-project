@@ -34,7 +34,7 @@
         },
         init : async function(){
           
-            this.getGames();
+           this.getGames();
            var arr=  await  fetch('/api/leaderboard',{
                              methods: "GET",
                          })

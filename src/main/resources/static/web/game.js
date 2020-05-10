@@ -77,18 +77,19 @@
                     }
                 }
 
-             this.calcHits();
-            var pSize = this.game[0].playerGameResult.length;
-            var oSize = this.game[0].opponentGameResult.length;
-            if(this.game[0].playerGameResult[pSize-1].nrOfShipsLeft == 0){
-                this.status = "lose";
-            }else if(this.game[0].opponentGameResult[oSize-1].nrOfShipsLeft == 0){
-                this.status = "win";
+            this.calcHits();
+            if( this.state == "gameOver"){
+                var pSize = this.game[0].playerGameResult.length;
+                var oSize = this.game[0].opponentGameResult.length;
+                if(this.game[0].playerGameResult[pSize-1].nrOfShipsLeft == 0){
+                    this.status = "lose";
+                }else if(this.game[0].opponentGameResult[oSize-1].nrOfShipsLeft == 0){
+                    this.status = "win";
+                }
+                console.log("opnr:"+this.game[0].opponentGameResult[0].nrOfShipsLeft);
+                console.log("pnr:"+this.game[0].playerGameResult[0].nrOfShipsLeft);
+                console.log("stateeeeeeee:"+this.state);
             }
-            console.log("opnr:"+this.game[0].opponentGameResult[0].nrOfShipsLeft);
-            console.log("pnr:"+this.game[0].playerGameResult[0].nrOfShipsLeft);
-            console.log("stateeeeeeee:"+this.state);
-
          },
 
          init : async  function(){
@@ -320,15 +321,19 @@
                         .then(data => data)
                         .catch(err => err)
             console.log(result);
-            if(result.state == 1){
+            if(result.state == 1 && this.state != "choosingShips"){
                 this.state = "choosingShips";
-            }else if(result.state == 2){
+                this.exceptionMessage = "";
+            }else if(result.state == 2 && this.state != "gameOver"){
                 this.state = "gameOver";
-            }else if(result.state == 10){
+                 this.exceptionMessage = "";
+            }else if(result.state == 10 && this.state != "choosingSalvo"){
                 this.state = "choosingSalvo";
+                this.exceptionMessage = "";
                 this.updateGrid;
-            }else if (result.state == 20){
+            }else if (result.state == 20 && this.state != "waiting"){
                 this.state = "waiting";
+                this.exceptionMessage = "";
                 this.updateGrid;
             }
             console.log("state is :" +this.state);

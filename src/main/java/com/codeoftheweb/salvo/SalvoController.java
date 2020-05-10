@@ -338,43 +338,44 @@ public class SalvoController {
             int oppRemainedShips = currentNrOfShips;
 
 
-            if (myRemainedShips == 0 && oppRemainedShips == 0) {
-                gamePlayer.get().getGame().setState(Game.GameOver);
-                gameRepository.save(gamePlayer.get().getGame());
-                Score score = new Score();
-                score.setScore(0.5);
-                score.setGame(gamePlayer.get().getGame());
-                score.setPlayer(gamePlayer.get().getPlayer());
-                score.setFinishDate(new Date().getTime());
-                scoreRepository.save(score);
+            if (gamePlayer.get().getGame().getState() != Game.GameOver) {
+                if (myRemainedShips == 0 && oppRemainedShips == 0) {
+                    gamePlayer.get().getGame().setState(Game.GameOver);
+                    gameRepository.save(gamePlayer.get().getGame());
+                    Score score = new Score();
+                    score.setScore(0.5);
+                    score.setGame(gamePlayer.get().getGame());
+                    score.setPlayer(gamePlayer.get().getPlayer());
+                    score.setFinishDate(new Date().getTime());
+                    scoreRepository.save(score);
 
-                Score oppScore = new Score();
-                oppScore.setScore(0.5);
-                oppScore.setGame(gamePlayer.get().getGame());
-                oppScore.setPlayer(opponentGamePlayer.getPlayer());
-                oppScore.setFinishDate(new Date().getTime());
-                scoreRepository.save(oppScore);
+                    Score oppScore = new Score();
+                    oppScore.setScore(0.5);
+                    oppScore.setGame(gamePlayer.get().getGame());
+                    oppScore.setPlayer(opponentGamePlayer.getPlayer());
+                    oppScore.setFinishDate(new Date().getTime());
+                    scoreRepository.save(oppScore);
 
-            } else if (myRemainedShips == 0 && oppRemainedShips > 0) {
-                gamePlayer.get().getGame().setState(Game.GameOver);
-                gameRepository.save(gamePlayer.get().getGame());
-                Score score = new Score();
-                score.setScore(1);
-                score.setGame(gamePlayer.get().getGame());
-                score.setPlayer(opponentGamePlayer.getPlayer());
-                score.setFinishDate(new Date().getTime());
-                scoreRepository.save(score);
+                } else if (myRemainedShips == 0 && oppRemainedShips > 0) {
+                    gamePlayer.get().getGame().setState(Game.GameOver);
+                    gameRepository.save(gamePlayer.get().getGame());
+                    Score score = new Score();
+                    score.setScore(1);
+                    score.setGame(gamePlayer.get().getGame());
+                    score.setPlayer(opponentGamePlayer.getPlayer());
+                    score.setFinishDate(new Date().getTime());
+                    scoreRepository.save(score);
 
-
-            } else if (myRemainedShips > 0 && oppRemainedShips == 0) {
-                gamePlayer.get().getGame().setState(Game.GameOver);
-                gameRepository.save(gamePlayer.get().getGame());
-                Score score = new Score();
-                score.setScore(1);
-                score.setGame(gamePlayer.get().getGame());
-                score.setPlayer(gamePlayer.get().getPlayer());
-                score.setFinishDate(new Date().getTime());
-                scoreRepository.save(score);
+                } else if (myRemainedShips > 0 && oppRemainedShips == 0) {
+                    gamePlayer.get().getGame().setState(Game.GameOver);
+                    gameRepository.save(gamePlayer.get().getGame());
+                    Score score = new Score();
+                    score.setScore(1);
+                    score.setGame(gamePlayer.get().getGame());
+                    score.setPlayer(gamePlayer.get().getPlayer());
+                    score.setFinishDate(new Date().getTime());
+                    scoreRepository.save(score);
+                }
             }
         }
 
